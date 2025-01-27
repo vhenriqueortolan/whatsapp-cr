@@ -8,10 +8,10 @@ import Photographer from '../../../models/Photographer.js';
 dotenv.config();
 
 export const notification = {
-    toBroker: async (data: any)=>{
-        const sock = await instances.get(data.userId)
+    toBroker: async (data: any, userId: any)=>{
+        const sock = await instances.get(userId)
         if (!sock){
-            const err = {status: 'failed', message: 'Serviçp Whatsapp não está conectado'}
+            const err = {status: 'failed', message: 'Serviço Whatsapp não está conectado'}
             throw err
         }
         let message = ""
@@ -39,8 +39,8 @@ export const notification = {
             throw error
         }
 },
-    toPhotographer: async (data: any)=>{
-        const sock = await instances.get(data.userId)
+    toPhotographer: async (data: any, userId: any)=>{
+        const sock = await instances.get(userId)
         const [photo] = await Photographer.find()
         data.photographer = {
             name: photo.name,

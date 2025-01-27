@@ -4,12 +4,13 @@ import { handle } from '../services/cal.comService/handlers/dataHandle.js';
 
 const router = express.Router();
 
-router.post('/notification', async (req, res) =>{
+router.post('/notification/:userId', async (req, res) =>{
     const rawData = req.body
+    const {userId} = req.params
     try {
         const data = handle.bookingData(rawData)
-        const sendBrokers = await notification.toBroker(data)
-        const sendPhotographer = await notification.toPhotographer(data)
+        const sendBrokers = await notification.toBroker(data, userId)
+        const sendPhotographer = await notification.toPhotographer(data, userId)
         res.status(200).json({...sendBrokers, ...sendPhotographer});
     } catch (error: any) {
         res.status(500).json({ message: 'Erro ao enviar mensagem', error: error.message });
