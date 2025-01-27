@@ -1,7 +1,6 @@
 import express from 'express';
 import { notification, defineBookingStatus } from '../services/cal.comService/handlers/bookingHandle.js' 
 import { handle } from '../services/cal.comService/handlers/dataHandle.js';
-import { delayFunction } from 'utils/dataUtils.js';
 
 const router = express.Router();
 
@@ -12,12 +11,8 @@ router.post('/notification/:userId', async (req, res) =>{
     try {
         const data = handle.bookingData(rawData)
         console.log({...data})
-        let sendBrokers: any
-        let sendPhotographer: any
-        // setTimeout(async () => {
-        //     sendBrokers = await notification.toBroker(data, userId)
-        // }, 5000);
-        sendPhotographer = await notification.toPhotographer(data, userId)
+        const sendBrokers = await notification.toBroker(data, userId)
+        const sendPhotographer = await notification.toPhotographer(data, userId)
         res.status(200).json({...sendBrokers, ...sendPhotographer});
     } catch (error: any) {
         res.status(500).json({ message: 'Erro ao enviar mensagem', error: error.message });
