@@ -50,3 +50,21 @@ export async function disconnectWhatsApp(userId: Types.ObjectId): Promise<void> 
       console.error(`Erro ao disconectar do whatsapp o usuário ${userId}:`, error);
   }
 }
+
+export async function sendToGroup(sock:any, group: any, message: any){
+  if (sock) {
+    try {
+          await sock.sendMessage(group, { text: message });
+          console.log(`Mensagem para ${group}: ${message}`);
+          return {status: 'success', to: group}
+    } catch (error) {
+      console.error(`Erro para enviar a mensagem: ${error}`);
+      const err = `Erro para enviar a mensagem: ${error}`
+      throw err
+    }
+  } else {
+    const error = 'Conexão com WhatsApp não foi estabelecida'
+    console.error(error);
+    throw error
+  }
+}
