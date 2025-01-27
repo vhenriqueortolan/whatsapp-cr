@@ -10,7 +10,7 @@ router.post('/notification/:userId', async (req, res) =>{
     const {userId} = req.params
     try {
         const data = handle.bookingData(rawData)
-        console.log(data.status)
+        console.log({...data})
         let sendBrokers: any
         let sendPhotographer: any
         setTimeout(async () => {
