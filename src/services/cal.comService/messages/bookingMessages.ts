@@ -70,8 +70,8 @@ Corretor responsável: ${data.broker.name}
 Vai acompanhar: ${data.broker.accompany}
 ${data?.notes || ''}
         
-> Para *confirmar* o agendamento clique aqui https://whatsapp-cr.onrender.com/${data.bookingId}/confirm
-> Para *recusar* clique aqui https://whatsapp-cr.onrender.com/${data.bookingId}/decline`,
+> Para *confirmar* o agendamento clique aqui https://whatsapp-cr.onrender.com/booking/${data.bookingId}/confirm
+> Para *recusar* clique aqui https://whatsapp-cr.onrender.com/booking/${data.bookingId}/decline`,
 
     rejectedMessage: (data: any)=>`Olá, ${data.photographer.name}!! Você recusou um agendamento com a agência ${data.agency}:
 
@@ -90,7 +90,7 @@ Corretor responsável: ${data.broker.name}
 Vai acompanhar: ${data.broker.accompany}
 ${data?.notes || ''}
         
-> Para *cancelar* clique aqui https://whatsapp-cr.onrender.com/${data.bookingId}/cancel`,
+> Para *cancelar* clique aqui https://whatsapp-cr.onrender.com/booking/${data.bookingId}/cancel`,
 
     rescheduleMessage: (data: any)=>`Olá, ${data.photographer.name}!! Um agendamento com a agência ${data.agency} foi reagendado:
         
@@ -103,7 +103,7 @@ Corretor responsável: ${data.broker.name}
 Vai acompanhar: ${data.broker.accompany}
 ${data?.rescheduleReason || 'O motivo do reagendamento não foi informado.'}
         
-> Para *cancelar* clique aqui https://whatsapp-cr.onrender.com/${data.bookingId}/cancel`,
+> Para *cancelar* clique aqui https://whatsapp-cr.onrender.com/booking/${data.bookingId}/cancel`,
 
     cancelledMessage: (data: any)=>`Olá, ${data.photographer.name}!! Um agendamento com a agência ${data.agency} foi cancelado:
         
