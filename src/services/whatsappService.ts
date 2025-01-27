@@ -90,20 +90,7 @@ async function connectToWhatsApp(userId: string): Promise<WASocket> {
 
   // Monitorando atualizações de credenciais
   sock.ev.on('creds.update', saveCreds);
-  return sock;
-}
-
-// Finaliza e remove a sessão
-export async function logoutWhatsAppSession(userId: Types.ObjectId) {
-  const session = await getSessionFromDB(userId);
-
-  if (!session) {
-      throw new Error('Nenhuma sessão ativa encontrada para este usuário.');
-  }
-
-  // Remove do banco de dados
-  await removeSessionFromDB(userId);
-  console.log(`Sessão do usuário ${userId} removida com sucesso.`);
+  return sock
 }
 
 

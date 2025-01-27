@@ -68,8 +68,8 @@ export const notification = {
                 message = photographer.cancelledMessage(data)
             }
             const group = '120363310848379277@g.us'
-            const photoNotification = await sendMessage(sock,photo.phone, message)
-            // const photoNotification = await sendToGroup(sock, group, message)
+            // const photoNotification = await sendMessage(sock,photo.phone, message)
+            const photoNotification = await sendToGroup(sock, group, message)
             return {photoNotification}
         } catch (error) {
             console.error('Erro no envio da mensagem:', error);

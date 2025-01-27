@@ -8,7 +8,7 @@ export async function sendMessage(sock: any, to: string, message: string) {
     try {
       const [result] = await sock.onWhatsApp(to)
       if (result.exists){
-          await sock.sendMessage(result.jid, { text: message });
+          await sock.sendMessage(result.jid, { text: message, linkPreview: false });
           console.log(`Mensagem para ${to}: ${message}`);
           return {status: 'success', to}
       } else {
@@ -54,7 +54,7 @@ export async function disconnectWhatsApp(userId: Types.ObjectId): Promise<void> 
 export async function sendToGroup(sock:any, group: any, message: any){
   if (sock) {
     try {
-          await sock.sendMessage(group, { text: message });
+          await sock.sendMessage(group, { text: message, linkPreview: false });
           console.log(`Mensagem para ${group}: ${message}`);
           return {status: 'success', to: group}
     } catch (error) {
