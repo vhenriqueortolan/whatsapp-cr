@@ -18,6 +18,7 @@ router.post('/test/:userId', async (req:any, res: any)=>{
     }
     try {
         await sendMessage(sock, to, message)
+        res.status(200).json({status: 'success', to, message });
     } catch (error: any) {
         console.error('Erro ao verificar ou iniciar sessão:', error);
         res.status(500).json({ message: 'Erro ao verificar ou iniciar sessão', error: error.message });
