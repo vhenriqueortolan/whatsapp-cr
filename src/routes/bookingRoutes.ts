@@ -17,9 +17,7 @@ router.post('/notification/:userId', async (req, res) =>{
         // setTimeout(async () => {
         //     sendBrokers = await notification.toBroker(data, userId)
         // }, 5000);
-        setTimeout(async () => {
-            sendPhotographer = await notification.toPhotographer(data, userId)
-        }, 5000);
+        sendPhotographer = await notification.toPhotographer(data, userId)
         res.status(200).json({...sendBrokers, ...sendPhotographer});
     } catch (error: any) {
         res.status(500).json({ message: 'Erro ao enviar mensagem', error: error.message });
