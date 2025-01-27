@@ -1,9 +1,9 @@
-import { booking, photographer } from '../messages/bookingMessages';
+import { booking, photographer } from '../messages/bookingMessages.js';
 import dotenv from 'dotenv'
 import axios from "axios";
-import { sendMessage } from "utils/whatsappUtils.js";
-import { instances } from "services/whatsappService.js";
-import Photographer from 'models/Photographer';
+import { sendMessage } from "../../../utils/whatsappUtils.js";
+import { instances } from "../../../services/whatsappService.js";
+import Photographer from '../../../models/Photographer.js';
 
 dotenv.config();
 

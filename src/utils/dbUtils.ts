@@ -1,9 +1,9 @@
-import User from "models/User";
-import Photographer from "models/Photographer";
-import Session from "models/Session";
+import User from "../models/User.js";
+import Photographer from "../models/Photographer.js";
+import Session from "../models/Session.js";
 import { Types } from 'mongoose'
 import { BufferJSON } from "@whiskeysockets/baileys";
-import { connectToWhatsApp } from "services/whatsappService";
+import { connectToWhatsApp } from "../services/whatsappService.js";
 
 
 export async function registerUser(username: string, password: string, email: string, admin?: boolean){

@@ -1,14 +1,14 @@
 import express from 'express';
-import { auth } from 'auth/jwt';
-import whatsappRoutes from 'routes/whatsappRoutes';
-import userRoutes from 'routes/userRoutes'
-import authRoutes from 'routes/authRoutes'
-import photographerRoutes from 'routes/photographerRoutes'
-import bookingRoutes from 'routes/bookingRoutes'
+import { auth } from './auth/jwt.js';
+import whatsappRoutes from './routes/whatsappRoutes.js';
+import userRoutes from './routes/userRoutes.js'
+import authRoutes from './routes/authRoutes.js'
+import photographerRoutes from './routes/photographerRoutes.js'
+import bookingRoutes from './routes/bookingRoutes.js'
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv'
-import { connectDB } from 'services/dbService';
-import { initializeSessions } from 'utils/dbUtils';
+import { connectDB } from './services/dbService.js';
+import { initializeSessions } from './utils/dbUtils.js';
 
 dotenv.config()
 

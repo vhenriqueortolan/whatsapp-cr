@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx tsx ./src/app.ts",
     "build": "tsc",
-    "start": "node ./dist/app.js"
+    "start": "node ./dist/src/app.js"
   },
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.9",

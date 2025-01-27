@@ -2,7 +2,7 @@ import {DisconnectReason, makeWASocket, initAuthCreds, AuthenticationCreds, Sign
 import dotenv from 'dotenv'
 import { Types } from 'mongoose'
 import { Boom } from '@hapi/boom';
-import { getSessionFromDB, removeSessionFromDB, saveSessionToDB } from 'utils/dbUtils';
+import { getSessionFromDB, removeSessionFromDB, saveSessionToDB } from '../utils/dbUtils.js';
 
 dotenv.config()
 

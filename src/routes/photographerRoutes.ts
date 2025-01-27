@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { listPhotographers, registerPhotographer, updatePhotographer, deletePhotographer } from 'utils/dbUtils';
+import { listPhotographers, registerPhotographer, updatePhotographer, deletePhotographer } from '../utils/dbUtils.js';
 
 const router = Router();
 

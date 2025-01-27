@@ -1,7 +1,6 @@
 import { Router } from 'express';
-import { connectToWhatsApp, instances } from '../services/whatsappService';
-import { disconnectWhatsApp, sendMessage } from 'utils/whatsappUtils';
-import { getSessionFromDB } from 'utils/dbUtils';
+import { connectToWhatsApp, instances } from '../services/whatsappService.js';
+import { disconnectWhatsApp, sendMessage } from '../utils/whatsappUtils.js';
 
 const router = Router();
 

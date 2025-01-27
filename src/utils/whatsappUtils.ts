@@ -1,7 +1,6 @@
-import { error } from "console";
-import { removeSessionFromDB } from "./dbUtils";
+import { removeSessionFromDB } from "./dbUtils.js";
 import { Types } from "mongoose";
-import { connectToWhatsApp, instances } from "services/whatsappService";
+import { connectToWhatsApp, instances } from "../services/whatsappService.js";
 
 // Função para enviar mensagem
 export async function sendMessage(sock: any, to: string, message: string) {

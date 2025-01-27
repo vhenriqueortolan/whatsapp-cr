@@ -1,4 +1,4 @@
-import { transformDateTime, transformPhone } from "../../../utils/dataUtils"
+import { transformDateTime, transformPhone } from "../../../utils/dataUtils.js"
 
 export const handle = {
     bookingData: (rawData: any)=>{

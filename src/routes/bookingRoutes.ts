@@ -1,6 +1,6 @@
 import express from 'express';
-import { notification, defineBookingStatus } from '../services/cal.comService/handlers/bookingHandle' 
-import { handle } from '../services/cal.comService/handlers/dataHandle';
+import { notification, defineBookingStatus } from '../services/cal.comService/handlers/bookingHandle.js' 
+import { handle } from '../services/cal.comService/handlers/dataHandle.js';
 
 const router = express.Router();
 
