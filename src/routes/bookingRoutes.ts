@@ -7,15 +7,16 @@ const router = express.Router();
 
 router.post('/notification/:userId', async (req, res) =>{
     const rawData = req.body
+    console.log({...rawData})
     const {userId} = req.params
     try {
         const data = handle.bookingData(rawData)
         console.log({...data})
         let sendBrokers: any
         let sendPhotographer: any
-        setTimeout(async () => {
-            sendBrokers = await notification.toBroker(data, userId)
-        }, 5000);
+        // setTimeout(async () => {
+        //     sendBrokers = await notification.toBroker(data, userId)
+        // }, 5000);
         setTimeout(async () => {
             sendPhotographer = await notification.toPhotographer(data, userId)
         }, 5000);
