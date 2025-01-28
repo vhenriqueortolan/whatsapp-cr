@@ -1,10 +1,9 @@
 import {DisconnectReason, makeWASocket, initAuthCreds, AuthenticationCreds, SignalDataTypeMap, WASocket, GroupMetadata } from '@whiskeysockets/baileys';
 import dotenv from 'dotenv'
-import NodeCache from 'node-cache';
 import { Types } from 'mongoose'
 import { Boom } from '@hapi/boom';
 import { getSessionFromDB, saveSessionToDB } from '../utils/dbUtils.js';
-import { disconnectWhatsApp } from 'utils/whatsappUtils.js';
+import { disconnectWhatsApp } from '../utils/whatsappUtils.js';
 
 dotenv.config()
 
