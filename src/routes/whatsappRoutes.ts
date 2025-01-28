@@ -17,7 +17,7 @@ router.post('/test/:userId', async (req:any, res: any)=>{
         }
     }
     try {
-        const send = await sendToGroup(sock, groupId, message)
+        const send: any = await sendToGroup(sock, groupId, message)
         res.status(200).json({...send});
     } catch (error: any) {
         console.error('Erro ao verificar ou iniciar sessão:', error);

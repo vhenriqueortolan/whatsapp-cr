@@ -53,11 +53,37 @@ export async function disconnectWhatsApp(userId: Types.ObjectId): Promise<void> 
 }
 
 export async function sendToGroup(sock: WASocket, groupJid: string, message: string){
-  try {
-    const send = await sock.sendMessage(groupJid, {text: message})
-    return send
-  } catch (error) {
-    console.error('erro para enviar a mensagem: ', error)
-    throw error
-  }
+  return new Promise((resolve, reject) => {
+    // Envia a mensagem
+    sock
+      .sendMessage(groupJid, {text: message, linkPreview: null})
+      .then((response) => {
+        const messageId = response?.key.id; // Captura o ID da mensagem enviada
+
+        // Listener para mudanças de status
+        const onMessageUpdate = (update: any) => {
+          if (update.key.id === messageId) {
+            const status = update.status;
+            
+            if (status === 'serverAck' || status === 'delivered' || status === 'read') {
+              // Status final alcançado, resolvemos a promessa
+              sock.ev.off('messages.update', onMessageUpdate);
+              resolve({ status, messageId });
+            }
+          }
+        };
+
+        // Escuta o evento de atualização de mensagem
+        sock.ev.on('messages.update', onMessageUpdate);
+
+        // Opcional: Define um timeout para evitar espera indefinida
+        setTimeout(() => {
+          sock.ev.off('messages.update', onMessageUpdate);
+          reject(new Error('Tempo limite atingido para o envio da mensagem.'));
+        }, 30000); // 30 segundos
+      })
+      .catch((err) => {
+        reject(err); // Rejeita em caso de erro no envio
+      });
+  });
 }

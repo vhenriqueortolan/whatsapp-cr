@@ -67,10 +67,10 @@ export const notification = {
             if(data.bookingStatus == 'BOOKING_CANCELLED'){
                 message = photographer.cancelledMessage(data)
             }
-            const groupId = "120363394631214146@g.us"
-            const photoNotification = await sendToGroup(sock, groupId, message)
+            const groupJid = "120363394631214146@g.us"
+            const result: any = await sendToGroup(sock, groupJid, message)
             // const photoNotification = await sendMessage(sock,photo.phone, message)
-            return {photoNotification}
+            return {status: result.status, messageId: result.messageId}
         } catch (error) {
             console.error('Erro no envio da mensagem:', error);
             throw error
