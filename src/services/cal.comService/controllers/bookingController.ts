@@ -2,7 +2,7 @@ import { booking, photographer } from '../messages/bookingMessages.js';
 import dotenv from 'dotenv'
 import axios from "axios";
 import { sendMessage, sendToGroup } from "../../../utils/whatsappUtils.js";
-import { instances } from "../../../services/whatsappService.js";
+import { instances } from "../../whatsappService.js";
 import Photographer from '../../../models/Photographer.js';
 
 dotenv.config();
@@ -67,9 +67,9 @@ export const notification = {
             if(data.bookingStatus == 'BOOKING_CANCELLED'){
                 message = photographer.cancelledMessage(data)
             }
-            const group = '120363310848379277@g.us'
+            const groupId = "120363394631214146@g.us"
+            const photoNotification = await sendToGroup(sock, groupId, message)
             // const photoNotification = await sendMessage(sock,photo.phone, message)
-            const photoNotification = await sendToGroup(sock, group, message)
             return {photoNotification}
         } catch (error) {
             console.error('Erro no envio da mensagem:', error);

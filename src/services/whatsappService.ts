@@ -1,8 +1,10 @@
-import {DisconnectReason, makeWASocket, initAuthCreds, AuthenticationCreds, SignalDataTypeMap, WASocket } from '@whiskeysockets/baileys';
+import {DisconnectReason, makeWASocket, initAuthCreds, AuthenticationCreds, SignalDataTypeMap, WASocket, GroupMetadata } from '@whiskeysockets/baileys';
 import dotenv from 'dotenv'
+import NodeCache from 'node-cache';
 import { Types } from 'mongoose'
 import { Boom } from '@hapi/boom';
-import { getSessionFromDB, removeSessionFromDB, saveSessionToDB } from '../utils/dbUtils.js';
+import { getSessionFromDB, saveSessionToDB } from '../utils/dbUtils.js';
+import { disconnectWhatsApp } from 'utils/whatsappUtils.js';
 
 dotenv.config()
 
@@ -21,7 +23,7 @@ async function connectToWhatsApp(userId: string): Promise<WASocket> {
   // Verifica se já existe uma instância para o usuário
   if (instances.has(userId)) {
       console.log(`Returning existing WhatsApp instance for user ${userId}`);
-      return instances.get(userId as unknown as string)!;
+      return instances.get(userId)!;
   }
 
   // Recupera credenciais e chaves do banco de dados
@@ -72,8 +74,7 @@ async function connectToWhatsApp(userId: string): Promise<WASocket> {
 
           // Remove do cache se desconectado permanentemente
           if (!shouldReconnect) {
-              instances.delete(userId.toString());
-              console.log(`Removed WhatsApp instance for user ${userId}`);
+              disconnectWhatsApp(userId as unknown as Types.ObjectId)
           }
 
           // Reconectar se necessário
@@ -83,14 +84,32 @@ async function connectToWhatsApp(userId: string): Promise<WASocket> {
       } else if (connection === 'open') {
           console.log('Opened connection for user', userId);
             // Salva a instância no cache
-          instances.set(userId.toString(), sock);
+          instances.set(userId, sock);
           console.log(`New WhatsApp instance created for user ${userId}`);
       }
   });
 
   // Monitorando atualizações de credenciais
-  sock.ev.on('creds.update', saveCreds);
-  return sock
+  sock.ev.on('creds.update', await saveCreds);
+
+      // Monitorando mensagens recebidas
+      sock.ev.on('messages.upsert', async (msg) => {
+        const messages = msg.messages;
+
+        for (const message of messages) {
+            // Verifica se a mensagem veio de um grupo
+            if (message.key.remoteJid?.endsWith('@g.us')) {
+                const groupJid = message.key.remoteJid; // ID do grupo
+                const senderJid = message.key.participant; // ID do remetente
+                const messageContent = message.message?.conversation || '';
+
+                console.log(`Nova mensagem no grupo ${groupJid} de ${senderJid}: ${messageContent}`);
+            }
+          }
+        })
+        
+
+return sock
 }
 
 

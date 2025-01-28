@@ -1,6 +1,6 @@
 import express from 'express';
-import { notification, defineBookingStatus } from '../services/cal.comService/handlers/bookingHandle.js' 
-import { handle } from '../services/cal.comService/handlers/dataHandle.js';
+import { notification, defineBookingStatus } from '../services/cal.comService/controllers/bookingController.js' 
+import { handle } from '../services/cal.comService/controllers/dataController.js';
 
 const router = express.Router();
 
@@ -11,9 +11,9 @@ router.post('/notification/:userId', async (req, res) =>{
     try {
         const data = handle.bookingData(rawData)
         console.log({...data})
-        const sendBrokers = await notification.toBroker(data, userId)
+        const sendBookers = await notification.toBroker(data, userId)
         const sendPhotographer = await notification.toPhotographer(data, userId)
-        res.status(200).json({...sendBrokers, ...sendPhotographer});
+        res.status(200).json({...sendBookers, ...sendPhotographer});
     } catch (error: any) {
         res.status(500).json({ message: 'Erro ao enviar mensagem', error: error.message });
     }

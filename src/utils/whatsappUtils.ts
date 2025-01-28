@@ -1,6 +1,7 @@
 import { removeSessionFromDB } from "./dbUtils.js";
 import { Types } from "mongoose";
-import { connectToWhatsApp, instances } from "../services/whatsappService.js";
+import { instances } from "../services/whatsappService.js";
+import { WASocket } from "@whiskeysockets/baileys";
 
 // Função para enviar mensagem
 export async function sendMessage(sock: any, to: string, message: string) {
@@ -51,20 +52,12 @@ export async function disconnectWhatsApp(userId: Types.ObjectId): Promise<void> 
   }
 }
 
-export async function sendToGroup(sock:any, group: any, message: any){
-  if (sock) {
-    try {
-          await sock.sendMessage(group, { text: message, linkPreview: false });
-          console.log(`Mensagem para ${group}: ${message}`);
-          return {status: 'success', to: group}
-    } catch (error) {
-      console.error(`Erro para enviar a mensagem: ${error}`);
-      const err = `Erro para enviar a mensagem: ${error}`
-      throw err
-    }
-  } else {
-    const error = 'Conexão com WhatsApp não foi estabelecida'
-    console.error(error);
+export async function sendToGroup(sock: WASocket, groupJid: string, message: string){
+  try {
+    const send = await sock.sendMessage(groupJid, {text: message})
+    return send
+  } catch (error) {
+    console.error('erro para enviar a mensagem: ', error)
     throw error
   }
 }

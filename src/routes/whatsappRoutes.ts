@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { connectToWhatsApp, instances } from '../services/whatsappService.js';
-import { disconnectWhatsApp, sendMessage } from '../utils/whatsappUtils.js';
+import { disconnectWhatsApp, sendMessage, sendToGroup } from '../utils/whatsappUtils.js';
 
 const router = Router();
 
 router.post('/test/:userId', async (req:any, res: any)=>{
-    const {to, message} = req.body
+    const {groupId, message} = req.body
     const { userId } = req.params
     let sock = instances.get(userId);
     if(!sock){
@@ -17,8 +17,8 @@ router.post('/test/:userId', async (req:any, res: any)=>{
         }
     }
     try {
-        await sendMessage(sock, to, message)
-        res.status(200).json({status: 'success', to, message });
+        const send = await sendToGroup(sock, groupId, message)
+        res.status(200).json({...send});
     } catch (error: any) {
         console.error('Erro ao verificar ou iniciar sessão:', error);
         res.status(500).json({ message: 'Erro ao verificar ou iniciar sessão', error: error.message });
