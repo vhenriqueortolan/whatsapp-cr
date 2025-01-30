@@ -12,7 +12,7 @@ import dotenv from 'dotenv'
 import { connectDB } from './services/dbService.js';
 import { initializeSessions } from './utils/dbUtils.js';
 import { Server } from 'socket.io';
-import initSocket from 'services/socketService.js';
+import initSocket from './services/socketService.js';
 
 dotenv.config()
 
