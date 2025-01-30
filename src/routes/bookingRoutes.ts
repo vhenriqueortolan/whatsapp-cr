@@ -6,13 +6,12 @@ const router = express.Router();
 
 router.post('/notification/:userId', async (req, res) =>{
     const rawData = req.body
-    console.log({...rawData})
     const {userId} = req.params
     try {
         const data = handle.bookingData(rawData)
         console.log({...data})
-        const sendBookers = await notification.toBroker(data, userId)
         const sendPhotographer = await notification.toPhotographer(data, userId)
+        const sendBookers = await notification.toBroker(data, userId)
         res.status(200).json({...sendBookers, ...sendPhotographer});
     } catch (error: any) {
         res.status(500).json({ message: 'Erro ao enviar mensagem', error: error.message });

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { connectToWhatsApp, instances } from '../services/whatsappService.js';
-import { disconnectWhatsApp, sendMessage, sendToGroup } from '../utils/whatsappUtils.js';
+import { disconnectWhatsApp, sendMessage, getMessageStatus } from '../utils/whatsappUtils.js';
 
 const router = Router();
 
@@ -17,7 +17,7 @@ router.post('/test/:userId', async (req:any, res: any)=>{
         }
     }
     try {
-        const send: any = await sendToGroup(sock, groupId, message)
+        const send: any = await getMessageStatus(sock, groupId, message)
         res.status(200).json({...send});
     } catch (error: any) {
         console.error('Erro ao verificar ou iniciar sessão:', error);
@@ -25,8 +25,8 @@ router.post('/test/:userId', async (req:any, res: any)=>{
     }
 })
 
-router.get('/session/:userId', async (req: any, res: any)=>{
-    const { userId } = req.params;
+router.get('/session/:userId/:phone', async (req: any, res: any)=>{
+    const { userId, phone } = req.params;
 
     if (!userId) {
         return res.status(400).json({ message: 'O userId é obrigatório' });
@@ -38,7 +38,7 @@ router.get('/session/:userId', async (req: any, res: any)=>{
        return res.status(200).json({ message: `Sessão ativa para o usuário: ${userId}`});
     } else {
         // Caso não tenha sessão, inicia o processo de autenticação (gera o QR Code)
-        await connectToWhatsApp(userId);
+        await connectToWhatsApp(userId, phone);
         return res.status(200).json({ message: 'Sessão não encontrada, QR Code gerado para autenticação' });
     }
     } catch (error: any) {

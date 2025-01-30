@@ -2,6 +2,9 @@ import { Router } from 'express';
 import User from '../models/User.js';
 import bcrypt from 'bcrypt'
 import { generateToken } from '../auth/jwt.js';
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const router = Router();
 
@@ -20,8 +23,8 @@ router.post('/login', async (req: any, res: any) => {
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Senha inválida' });
         }
-        const token = await generateToken(user._id);
-        res.json({ message: 'Login bem-sucedido', token });
+        const token = await generateToken(user._id, user.admin);
+        res.json({token, message: 'Login bem-sucedido', user: user._id.toString(), role: user.admin ? 'admin' : 'user'});
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro no login' });

@@ -1,4 +1,4 @@
-import {DisconnectReason, makeWASocket, initAuthCreds, AuthenticationCreds, SignalDataTypeMap, WASocket, GroupMetadata } from '@whiskeysockets/baileys';
+import {DisconnectReason, makeWASocket, initAuthCreds, AuthenticationCreds, SignalDataTypeMap, WASocket, GroupMetadata, fetchLatestBaileysVersion } from '@whiskeysockets/baileys';
 import dotenv from 'dotenv'
 import { Types } from 'mongoose'
 import { Boom } from '@hapi/boom';
@@ -18,7 +18,9 @@ type State = {
 // Variável para armazenar a instância do socket
 const instances: Map<string, WASocket> = new Map();
 
-async function connectToWhatsApp(userId: string): Promise<WASocket> {
+const groupCache = new Map();
+
+async function connectToWhatsApp(userId: string, phone?: string): Promise<WASocket> {
   // Verifica se já existe uma instância para o usuário
   if (instances.has(userId)) {
       console.log(`Returning existing WhatsApp instance for user ${userId}`);
@@ -55,11 +57,16 @@ async function connectToWhatsApp(userId: string): Promise<WASocket> {
       await saveSessionToDB(userId as unknown as Types.ObjectId, state.creds, keys);
   };
 
+  const { version, isLatest } = await fetchLatestBaileysVersion();
+  console.log(`Usando a versão do WhatsApp: ${version.join('.')}, é a mais recente: ${isLatest}`);
+
   // Criando a conexão com o WhatsApp
   const sock = makeWASocket({
+      version,
       auth: state,
-      printQRInTerminal: true, // Para ambiente de desenvolvimento
+      printQRInTerminal: false, // Para ambiente de desenvolvimento
       markOnlineOnConnect: false,
+      cachedGroupMetadata: async (jid) => groupCache.get(jid)
   });
 
   // Monitorando a atualização da conexão
@@ -106,7 +113,10 @@ async function connectToWhatsApp(userId: string): Promise<WASocket> {
             }
           }
         })
-        
+        sock.ev.on('groups.update', async ([event]) => {
+          const metadata = await sock.groupMetadata(event.id as string);
+          groupCache.set(event.id, metadata);
+      });
 
 return sock
 }

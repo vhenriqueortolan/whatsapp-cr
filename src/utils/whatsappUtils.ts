@@ -9,9 +9,9 @@ export async function sendMessage(sock: any, to: string, message: string) {
     try {
       const [result] = await sock.onWhatsApp(to)
       if (result.exists){
-          await sock.sendMessage(result.jid, { text: message, linkPreview: false });
+          const messageStatus = await getMessageStatus(sock, result.jid, message);
           console.log(`Mensagem para ${to}: ${message}`);
-          return {status: 'success', to}
+          return messageStatus
       } else {
         return {status: 'failed', error: 'Whatsapp não existe', to}
       }
@@ -36,6 +36,10 @@ export async function disconnectWhatsApp(userId: Types.ObjectId): Promise<void> 
   }
 
   try {
+      // Remove a sessão do banco de dados
+      await removeSessionFromDB(userId);
+      console.log(`Removida do banco de dados a sessão de whatsapp para o usuário ${userId}`);
+
       // Fecha a conexão do WhatsApp
       await sock.logout();
       console.log(`A sessão de whatsapp do usuário ${userId} foi encerrada`);
@@ -43,35 +47,42 @@ export async function disconnectWhatsApp(userId: Types.ObjectId): Promise<void> 
       // Remove a instância do cache
       instances.delete(userId.toString());
       console.log(`Removida a instância de whatsapp para o usuário ${userId}`);
-
-      // Remove a sessão do banco de dados
-      await removeSessionFromDB(userId);
-      console.log(`Removida a sessão de whatsapp para o usuário ${userId}`);
   } catch (error) {
       console.error(`Erro ao disconectar do whatsapp o usuário ${userId}:`, error);
   }
 }
 
-export async function sendToGroup(sock: WASocket, groupJid: string, message: string){
+export async function getMessageStatus(sock: WASocket, groupJid: string, message: string){
   return new Promise((resolve, reject) => {
     // Envia a mensagem
     sock
       .sendMessage(groupJid, {text: message, linkPreview: null})
-      .then((response) => {
+      .then((response: any) => {
+        console.log({...response})
         const messageId = response?.key.id; // Captura o ID da mensagem enviada
 
         // Listener para mudanças de status
-        const onMessageUpdate = (update: any) => {
-          if (update.key.id === messageId) {
-            const status = update.status;
-            
-            if (status === 'serverAck' || status === 'delivered' || status === 'read') {
-              // Status final alcançado, resolvemos a promessa
-              sock.ev.off('messages.update', onMessageUpdate);
-              resolve({ status, messageId });
+        const onMessageUpdate = (updates: any) => {
+          Object.values(updates).forEach((update: any) => {
+            // Verifica se o objeto `update` contém `key.id`
+            if (update?.key?.id) {
+              if (update.key.id === messageId) {
+                const status = update.update?.status; // Certifique-se de que `status` existe
+                if (status === 1) { // Exemplos de status
+                  sock.ev.off('messages.update', onMessageUpdate); // Remove o listener
+                  resolve({ status, messageId });
+                }
+              }
+            } else {
+              console.warn('Atualização de mensagem sem informações completas:', update);
             }
-          }
+          });
         };
+
+        if(response.status === 'serverAck' || response?.status === 'delivered' || response?.status === 'read' || response?.status === 1){
+          sock.ev.off('messages.update', onMessageUpdate);
+          resolve({ status: response.status, messageId });
+        }
 
         // Escuta o evento de atualização de mensagem
         sock.ev.on('messages.update', onMessageUpdate);
@@ -86,4 +97,28 @@ export async function sendToGroup(sock: WASocket, groupJid: string, message: str
         reject(err); // Rejeita em caso de erro no envio
       });
   });
+}
+
+export async function getGroupMetadata(sock: WASocket, groupJid: string){
+  try {
+    const metadata = await sock.groupMetadata(groupJid);
+    const participantJids = metadata.participants.map((p) => p.id);
+
+    // Verifica as chaves para cada participante individualmente
+    const results = await Promise.all(
+        participantJids.map((jid) => sock.onWhatsApp(jid))
+    );
+
+    const missingKeys = participantJids.filter(
+        (_, index) => !results[index] || results[index].length === 0
+    );
+
+    if (missingKeys.length > 0) {
+        console.warn('Participantes com chaves ausentes:', missingKeys);
+    } else {
+        console.log('Todos os participantes têm chaves válidas.');
+    }
+  } catch (err) {
+      console.error('Erro ao verificar chaves dos participantes:', err);
+  }
 }

@@ -1,7 +1,7 @@
 import { booking, photographer } from '../messages/bookingMessages.js';
 import dotenv from 'dotenv'
 import axios from "axios";
-import { sendMessage, sendToGroup } from "../../../utils/whatsappUtils.js";
+import { getGroupMetadata, getMessageStatus, sendMessage } from "../../../utils/whatsappUtils.js";
 import { instances } from "../../whatsappService.js";
 import Photographer from '../../../models/Photographer.js';
 
@@ -68,7 +68,8 @@ export const notification = {
                 message = photographer.cancelledMessage(data)
             }
             const groupJid = "120363394631214146@g.us"
-            const result: any = await sendToGroup(sock, groupJid, message)
+            await getGroupMetadata(sock, groupJid)
+            const result: any = await getMessageStatus(sock, groupJid, message)
             // const photoNotification = await sendMessage(sock,photo.phone, message)
             return {status: result.status, messageId: result.messageId}
         } catch (error) {

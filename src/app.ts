@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http'
 import { auth } from './auth/jwt.js';
 import whatsappRoutes from './routes/whatsappRoutes.js';
 import userRoutes from './routes/userRoutes.js'
@@ -6,14 +7,27 @@ import authRoutes from './routes/authRoutes.js'
 import photographerRoutes from './routes/photographerRoutes.js'
 import bookingRoutes from './routes/bookingRoutes.js'
 import bodyParser from 'body-parser';
+import cors from 'cors'
 import dotenv from 'dotenv'
 import { connectDB } from './services/dbService.js';
 import { initializeSessions } from './utils/dbUtils.js';
+import { Server } from 'socket.io';
+import initSocket from 'services/socketService.js';
 
 dotenv.config()
 
 const app = express();
+// Cria o servidor HTTP a partir do Express
+const httpServer = http.createServer(app);
 
+// Inicializa o Socket.IO
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*', // Permite conexões de qualquer origem. Ajuste conforme necessário.
+  },
+});
+
+app.use(cors())
 app.use(bodyParser.json())
 
 // Rotas WhatsApp
@@ -26,9 +40,11 @@ app.use('/booking', bookingRoutes)
 // Conecta Banco de Dados
 await connectDB()
 
+await initSocket(io)
+
 // Inicia o servidor
 initializeSessions().then(() => {
-  app.listen(process.env.PORT, () => {
+  httpServer.listen(process.env.PORT, () => {
     console.log(`Server running on http://localhost:${process.env.PORT}`);
   });
 }).catch(err => {
