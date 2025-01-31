@@ -8,7 +8,7 @@ export function transformDateTime(rawDate: any){
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-        timeZone: 'UTC'
+        timeZone: 'America/Sao_Paulo'
     }).format(date);
 
     // Formatar as horas no formato hh:mm
@@ -16,7 +16,7 @@ export function transformDateTime(rawDate: any){
         hour: '2-digit',
         minute: '2-digit',
         hour12: false,
-        timeZone: 'UTC' // Certifica que está no fuso horário brasileiro
+        timeZone: 'America/Sao_Paulo'
     }).format(date);
 
     return { day: formattedDate, hour: formattedTime };
