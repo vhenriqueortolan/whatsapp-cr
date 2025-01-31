@@ -35,11 +35,9 @@ export const handle = {
             }
             if (rawData.triggerEvent == 'BOOKING_RESCHEDULE' && rawData.payload.responses.rescheduleReason.value){
                 data.rescheduleReason = `Motivo: ${rawData.payload.responses.rescheduleReason.value}`
-                data.schedule = transformDateTime(rawData.payload.rescheduleStartTime)
             }
             if (rawData.triggerEvent == 'BOOKING_REQUESTED' && rawData.payload.rescheduleId){
                 data.bookingStatus = 'BOOKING_RESCHEDULE'
-                data.schedule = transformDateTime(rawData.payload.rescheduleStartTime)
             }
             return data
         } catch (error: any) {
