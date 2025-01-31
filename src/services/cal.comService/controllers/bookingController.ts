@@ -42,10 +42,6 @@ export const notification = {
     toPhotographer: async (data: any, userId: any)=>{
         const sock = await instances.get(userId)
         const [photo] = await Photographer.find()
-        data.photographer = {
-            name: photo.name,
-            whatsapp: photo.phone
-        }
         if (!sock){
             const err = {status: 'failed', message: 'Serviço Whatsapp não está conectado'}
             throw err
@@ -67,10 +63,12 @@ export const notification = {
             if(data.bookingStatus == 'BOOKING_CANCELLED'){
                 message = photographer.cancelledMessage(data)
             }
-            const groupJid = "120363394631214146@g.us"
-            await getGroupMetadata(sock, groupJid)
-            const result: any = await getMessageStatus(sock, groupJid, message)
-            // const photoNotification = await sendMessage(sock,photo.phone, message)
+            if(!photo.whatsappId){
+                const err = 'Grupo de Fotos não definido'
+                throw new Error(err)
+            }
+            await getGroupMetadata(sock, photo.whatsappId)
+            const result: any = await getMessageStatus(sock, data.groupJid, message)
             return {status: result.status, messageId: result.messageId}
         } catch (error) {
             console.error('Erro no envio da mensagem:', error);

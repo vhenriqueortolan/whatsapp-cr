@@ -155,7 +155,7 @@ export async function updatePhotographer(photographerId: Types.ObjectId, name: s
             return {status: null, message: 'Nenhum usuário encontrado'}
         }
         photographer.name = name || photographer.name
-        photographer.phone = whatsapp || photographer.phone
+        photographer.whatsappId = whatsapp || photographer.whatsappId
 
         await photographer.save()
         return {status: 'success', message: 'Usuário atualizado com sucesso'}

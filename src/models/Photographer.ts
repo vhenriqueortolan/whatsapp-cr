@@ -6,9 +6,9 @@ const photographerSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        phone: {
+        whatsappId: {
             type: String,
-            required: true,
+            required: false
         }
     },
     {
