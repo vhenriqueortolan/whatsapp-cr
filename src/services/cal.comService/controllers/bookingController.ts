@@ -72,7 +72,7 @@ export const notification = {
                 throw new Error(err)
             }
             await getGroupMetadata(sock, photo.whatsappId)
-            const result: any = await getMessageStatus(sock, data.groupJid, message)
+            const result: any = await getMessageStatus(sock, photo.whatsappId, message)
             return {status: result.status, messageId: result.messageId}
         } catch (error) {
             console.error('Erro no envio da mensagem:', error);
