@@ -4,6 +4,7 @@ import axios from "axios";
 import { getGroupMetadata, getMessageStatus, sendMessage } from "../../../utils/whatsappUtils.js";
 import { instances } from "../../whatsappService.js";
 import Photographer from '../../../models/Photographer.js';
+import { group } from 'node:console';
 
 dotenv.config();
 
@@ -42,6 +43,9 @@ export const notification = {
     toPhotographer: async (data: any, userId: any)=>{
         const sock = await instances.get(userId)
         const [photo] = await Photographer.find()
+        data.photographer = {
+            name: photo.name,
+        }
         if (!sock){
             const err = {status: 'failed', message: 'Serviço Whatsapp não está conectado'}
             throw err
