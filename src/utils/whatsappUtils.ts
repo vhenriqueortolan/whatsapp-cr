@@ -40,13 +40,14 @@ export async function disconnectWhatsApp(userId: Types.ObjectId): Promise<void> 
       await removeSessionFromDB(userId);
       console.log(`Removida do banco de dados a sessão de whatsapp para o usuário ${userId}`);
 
+      // Remove a instância do cache
+      instances.delete(userId.toString());
+      console.log(`Removida a instância de whatsapp para o usuário ${userId}`);
+
       // Fecha a conexão do WhatsApp
       await sock.logout();
       console.log(`A sessão de whatsapp do usuário ${userId} foi encerrada`);
 
-      // Remove a instância do cache
-      instances.delete(userId.toString());
-      console.log(`Removida a instância de whatsapp para o usuário ${userId}`);
   } catch (error) {
       console.error(`Erro ao disconectar do whatsapp o usuário ${userId}:`, error);
   }

@@ -11,7 +11,10 @@ export default async function initSocket(io:Server) {
         socket.on('check-status',(userId)=>{
             sock = instances.get(userId)
             if(sock){
+                console.log(`Retornando instância do usuário ${userId}`)
                 socket.emit('session-started', { status: 'success', userId });
+            } else {
+                socket.emit('disconnected')
             }
         })
 
@@ -31,12 +34,18 @@ export default async function initSocket(io:Server) {
         });
 
         socket.on('connected', (userId)=>{
-            setTimeout(()=>{
+            let attempts = 0
+            const MAX_ATTEMPTS = 15
+            const interval = setInterval(()=>{
                 sock = instances.get(userId)
                 if (sock){
+                    clearInterval(interval);
                     socket.emit('session-started', {status: 'success', userId})
+                } else if (attempts >= MAX_ATTEMPTS){
+                    clearInterval(interval);
+                    socket.emit('disconnected')
                 }
-            }, 8000)
+            }, 2000)
         })
 
         socket.on("delete-session", async (userId)=>{
