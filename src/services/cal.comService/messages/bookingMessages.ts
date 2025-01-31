@@ -13,13 +13,13 @@ ${data?.notes || ''}
 *Aguarde a confirmação da reserva!*
     
 > Para alterar ou cancelar, clique aqui ${data.bookingPage}
-> Para agendar uma data para outro imóvel clique aqui https://cal.com/victor-henrique-ortolan-oxokkw/agendar-fotos`,
+> Para agendar uma data para outro imóvel clique aqui https://cal.com/creditoreal/agendar-fotos`,
 
     rejectedMessage: (data: any)=>`O agendamento de fotos para o imóvel ${data.property.id}, da agência ${data.agency}, no dia ${data.schedule.day} as ${data.schedule.hour} foi *recusado*.
 
     ${data?.rejectedReason || 'O motivo não foi informado.'}
 
-    > Para agendar uma nova data para esse ou outro imóvel visite https://cal.com/victor-henrique-ortolan-oxokkw/agendar-fotos`,
+    > Para agendar uma nova data para esse ou outro imóvel visite https://cal.com/creditoreal/agendar-fotos`,
 
     createdMessage: (data: any)=> `Oba! Temos ótimas notícias!! O agendamento da agência ${data.agency} com o fotógrafo está *confirmado* para o dia ${data.schedule.day} as ${data.schedule.hour}! Confira os dados:
         
@@ -34,7 +34,7 @@ ${data?.notes || ''}
 *Estamos anciosos pra ver o material!*
     
 > Para alterar ou cancelar, clique aqui ${data.bookingPage}
-> Para agendar uma data para outro imóvel clique aqui https://cal.com/victor-henrique-ortolan-oxokkw/agendar-fotos`,
+> Para agendar uma data para outro imóvel clique aqui https://cal.com/creditoreal/agendar-fotos`,
 
     rescheduleMessage: (data: any)=>`Hey! Passando para avisar que o agendamento da agência ${data.agency} com o fotógrafo foi *reagendado* para o dia ${data.schedule.day} as ${data.schedule.hour}! Confira os dados:
         
@@ -49,13 +49,13 @@ ${data?.rescheduleReason || 'O motivo do reagendamento não foi informado.'}
 *Estamos anciosos pra ver o material!*
     
 > Para alterar ou cancelar, clique aqui ${data.bookingPage}
-> Para agendar uma data para outro imóvel clique aqui https://cal.com/victor-henrique-ortolan-oxokkw/agendar-fotos`,
+> Para agendar uma data para outro imóvel clique aqui https://cal.com/creditoreal/agendar-fotos`,
 
     cancelledMessage: (data: any)=> `O agendamento de fotos para o imóvel ${data.property.id}, da agência ${data.agency}, no dia ${data.schedule.day} as ${data.schedule.hour} foi *cancelado*.
 
  ${data?.cancelledReason || 'O motivo não foi informado.'}
 
-> Para agendar uma nova data para esse ou outro imóvel visite https://cal.com/victor-henrique-ortolan-oxokkw/agendar-fotos`
+> Para agendar uma nova data para esse ou outro imóvel visite https://cal.com/creditoreal/agendar-fotos`
 }
 
 export const photographer = {
