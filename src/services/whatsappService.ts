@@ -4,7 +4,7 @@ import { Types } from 'mongoose'
 import { Boom } from '@hapi/boom';
 import { getSessionFromDB, saveSessionToDB } from '../utils/dbUtils.js';
 import { disconnectWhatsApp } from '../utils/whatsappUtils.js';
-import Photographer from 'models/Photographer.js';
+import Photographer from '../models/Photographer.js';
 
 dotenv.config()
 
