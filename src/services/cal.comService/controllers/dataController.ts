@@ -1,4 +1,4 @@
-import Booking from "models/Booking.js"
+import Booking from "../../../models/Booking.js"
 import { transformDateTime, transformPhone } from "../../../utils/dataUtils.js"
 
 export const handle = {

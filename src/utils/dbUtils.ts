@@ -4,7 +4,7 @@ import Session from "../models/Session.js";
 import { Types } from 'mongoose'
 import { BufferJSON } from "@whiskeysockets/baileys";
 import { connectToWhatsApp } from "../services/whatsappService.js";
-import Booking from "models/Booking.js";
+import Booking from "../models/Booking.js";
 
 
 export async function registerUser(username: string, password: string, email: string, name: string, role: string){

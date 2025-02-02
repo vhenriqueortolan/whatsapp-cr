@@ -1,7 +1,7 @@
 import express from 'express';
 import { notification, defineBookingStatus } from '../services/cal.comService/controllers/bookingController.js' 
 import { handle } from '../services/cal.comService/controllers/dataController.js';
-import { getAllBookings } from 'utils/dbUtils.js';
+import { getAllBookings } from '../utils/dbUtils.js';
 
 const router = express.Router();
 
