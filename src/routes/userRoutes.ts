@@ -6,10 +6,10 @@ const router = Router();
 
 // Rota para registrar usuário
 router.post('/register', async (req: any, res: any) => {
-    const {username, password, email, admin} = req.body
+    const {username, password, email, name, role} = req.body
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        await registerUser(username, hashedPassword, email, admin)
+        await registerUser(username, hashedPassword, email, name, role)
         res.status(200).json({status: 'success', message: 'Usuário criado com sucesso'})
     } catch (error: any) {
         res.status(500).json({status: 'failed', message: error.message})
@@ -28,9 +28,9 @@ router.get('/list', async (req: any, res: any) => {
 
 router.put('/update/:userId', async (req: any, res: any) => {
     const userId = req.params.userId
-    const {username, password, email, admin} = req.body
+    const {username, password, email, name, role} = req.body
     try {
-        const update = await updateUser(userId, username, password, email, admin)
+        const update = await updateUser(userId, username, password, email, name, role)
         if (!update.status){
            return res.status(404).json({status: 'failed', error: update.message})
         }

@@ -9,7 +9,14 @@ const photographerSchema = new mongoose.Schema(
         whatsappId: {
             type: String,
             required: false
-        }
+        },
+        username: { 
+            type: String, 
+            required: true, 
+            unique: true },
+        password: { 
+            type: String, 
+            required: true }, // Deve ser armazenado como hash
     },
     {
         timestamps: true

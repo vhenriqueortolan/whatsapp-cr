@@ -4,11 +4,12 @@ import Session from "../models/Session.js";
 import { Types } from 'mongoose'
 import { BufferJSON } from "@whiskeysockets/baileys";
 import { connectToWhatsApp } from "../services/whatsappService.js";
+import Booking from "models/Booking.js";
 
 
-export async function registerUser(username: string, password: string, email: string, admin?: boolean){
+export async function registerUser(username: string, password: string, email: string, name: string, role: string){
     try {
-        const newUser = new User({username, password, email, admin})
+        const newUser = new User({username, password, email, name, role})
         await newUser.save()
     } catch (error: any) {
         console.log(error.message)
@@ -18,7 +19,7 @@ export async function registerUser(username: string, password: string, email: st
 
 export async function listUsers(){
     try {
-        const users = await User.find().select('username email admin')
+        const users = await User.find().select('username email name role')
         if (!users){
             throw new Error('Nenhum usuário encontrado')
         }
@@ -28,7 +29,7 @@ export async function listUsers(){
     }
 }
 
-export async function updateUser(userId: Types.ObjectId, username?: string, password?: string, email?: string, admin?: boolean){
+export async function updateUser(userId: Types.ObjectId, username?: string, password?: string, email?: string, name?: string, role?: string){
     try {
         const user = await User.findById(userId)
         if (!user){
@@ -37,7 +38,8 @@ export async function updateUser(userId: Types.ObjectId, username?: string, pass
         user.username = username || user.username
         user.password = password || user.password
         user.email = email || user.email
-        user.admin = admin || user.admin
+        user.name = name || user.name
+        user.role = role || user.role
 
         await user.save()
         return {status: 'success', message: 'Usuário atualizado com sucesso'}
@@ -126,9 +128,9 @@ export async function removeSessionFromDB(userId: Types.ObjectId) {
     }
 }
 
-export async function registerPhotographer(name: string, phone: string){
+export async function registerPhotographer(name: string, username: string, password: string, whatsappId?: string){
     try {
-        const newPhotographer = new Photographer({name, phone})
+        const newPhotographer = new Photographer({name, username, password})
         await newPhotographer.save()
     } catch (error: any) {
         console.error(error)
@@ -138,7 +140,7 @@ export async function registerPhotographer(name: string, phone: string){
 
 export async function listPhotographers(){
     try {
-        const photographers = await Photographer.find().select('name phone')
+        const photographers = await Photographer.find().select('name username')
         if (!photographers){
             throw new Error('Nenhum usuário encontrado')
         }
@@ -148,14 +150,16 @@ export async function listPhotographers(){
     }
 }
 
-export async function updatePhotographer(photographerId: Types.ObjectId, name: string, whatsapp: string ){
+export async function updatePhotographer(photographerId: Types.ObjectId, name?: string, whatsappId?: string, username?: string, password?: string ){
     try {
         const photographer = await Photographer.findById(photographerId)
         if (!photographer){
             return {status: null, message: 'Nenhum usuário encontrado'}
         }
         photographer.name = name || photographer.name
-        photographer.whatsappId = whatsapp || photographer.whatsappId
+        photographer.whatsappId = whatsappId || photographer.whatsappId
+        photographer.username = username || photographer.username
+        photographer.password = password || photographer.password
 
         await photographer.save()
         return {status: 'success', message: 'Usuário atualizado com sucesso'}
@@ -175,5 +179,14 @@ export async function deletePhotographer(photographerId: Types.ObjectId){
         return {status: 'success', message: 'Usuário deletado com sucesso'}
     } catch (error: any) {
         throw error.message
+    }
+}
+
+export async function getAllBookings(){
+    try {
+        const allBookings = await Booking.find()
+        return allBookings
+    } catch (error) {
+        throw error
     }
 }

@@ -23,8 +23,8 @@ router.post('/login', async (req: any, res: any) => {
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Senha inválida' });
         }
-        const token = await generateToken(user._id, user.admin);
-        res.json({token, message: 'Login bem-sucedido', user: user._id.toString(), role: user.admin ? 'admin' : 'user'});
+        const token = await generateToken(user._id, user.role, user.name);
+        res.json({token, message: 'Login bem-sucedido'});
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro no login' });

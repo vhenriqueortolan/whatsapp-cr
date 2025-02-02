@@ -1,14 +1,16 @@
+import Booking from "models/Booking.js"
 import { transformDateTime, transformPhone } from "../../../utils/dataUtils.js"
 
 export const handle = {
-    bookingData: (rawData: any)=>{
+    bookingData: async (rawData: any)=>{
         try {
             const data: any = {}
-            data.bookingStatus = rawData.triggerEvent
-            data.bookingId = rawData.payload.uid
-            data.bookingPage = `https://cal.com/booking/${rawData.payload.uid}`
+            data.trigger = rawData.triggerEvent
+            data.status = rawData.payload.status
+            data.id = rawData.payload.uid
+            data.page = `https://cal.com/booking/${rawData.payload.uid}`
             data.agency = rawData.payload.responses.agencia.value
-            data.agent = {
+            data.booker = {
                 name: rawData.payload.responses.name.value,
                 whatsapp: transformPhone(rawData.payload.responses.whatsapp.value)
             }
@@ -23,7 +25,10 @@ export const handle = {
                 neighborhood: rawData.payload.responses.bairro.value
             }
             data.services = rawData.payload.responses.servico.value
-            data.schedule = transformDateTime(rawData.payload.startTime)
+            data.schedule = {
+                start: transformDateTime(rawData.payload.startTime),
+                end: transformDateTime(rawData.payload.endTime).hour,
+            }
             if(rawData.payload.responses.notes.value){
                 data.notes = `Observações: ${rawData.payload.responses.notes.value}`
             }
@@ -37,12 +42,29 @@ export const handle = {
                 data.rescheduleReason = `Motivo: ${rawData.payload.responses.rescheduleReason.value}`
             }
             if (rawData.triggerEvent == 'BOOKING_REQUESTED' && rawData.payload.rescheduleId){
-                data.bookingStatus = 'BOOKING_RESCHEDULE'
+                data.trigger = 'BOOKING_RESCHEDULE'
+            }
+            if(data.trigger == 'BOOKING_REQUESTED'){
+                try {
+                    const newBooking = new Booking(data)
+                    await newBooking.save()   
+                    console.log(`Dados salvos no banco de dados: ${newBooking}`)
+                } catch (error) {
+                    console.log('Erro ao salvar os dados:', error)
+                    throw error
+                }
+            } else {
+                try {
+                    await Booking.replaceOne({id: data.id}, data)
+                } catch (error) {
+                    console.log('Erro ao salvar os dados:', error)
+                    throw error
+                }
             }
             return data
         } catch (error: any) {
             console.log('Erro no tratamento dos dados:', error)
-            throw new Error(error)
+            throw error
         }
-    }
+    }   
 }

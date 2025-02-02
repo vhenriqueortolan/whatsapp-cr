@@ -1,14 +1,16 @@
 import { Router } from 'express';
 import { listPhotographers, registerPhotographer, updatePhotographer, deletePhotographer } from '../utils/dbUtils.js';
+import bcrypt from 'bcrypt'
 
 const router = Router();
 
 // Rota para registrar usuário
 router.post('/register', async (req: any, res: any) => {
-    const {name, whatsapp} = req.body
-    console.log({name, whatsapp})
+    const {name, whatsappId, username, password} = req.body
+    console.log({name, whatsappId})
     try {
-        await registerPhotographer(name, whatsapp)
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await registerPhotographer(name, username, hashedPassword, whatsappId)
         res.status(200).json({status: 'success', message: 'Fotógrafo criado com sucesso'})
     } catch (error: any) {
         res.status(500).json({status: 'failed', message: error.message})
@@ -27,9 +29,10 @@ router.get('/list', async (req: any, res: any) => {
 
 router.put('/update/:photographerId', async (req: any, res: any) => {
     const photographerId = req.params.photographerId
-    const {name, whatsapp} = req.body
+    const {name, whatsappId, username, password} = req.body
     try {
-        const update = await updatePhotographer(photographerId, name, whatsapp)
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const update = await updatePhotographer(photographerId, name, whatsappId, username, hashedPassword)
         if (!update.status){
            return res.status(404).json({status: 'failed', error: update.message})
         }

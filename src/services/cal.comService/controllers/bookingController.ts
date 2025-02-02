@@ -4,7 +4,6 @@ import axios from "axios";
 import { getGroupMetadata, getMessageStatus, sendMessage } from "../../../utils/whatsappUtils.js";
 import { instances } from "../../whatsappService.js";
 import Photographer from '../../../models/Photographer.js';
-import { group } from 'node:console';
 
 dotenv.config();
 
@@ -17,23 +16,23 @@ export const notification = {
         }
         let message = ""
         try {
-            if(data.bookingStatus == 'BOOKING_REQUESTED'){
+            if(data.trigger == 'BOOKING_REQUESTED'){
                 message = booking.requestedMessage(data)
             }
-            if(data.bookingStatus == 'BOOKING_REJECTED'){
+            if(data.trigger == 'BOOKING_REJECTED'){
                 message = booking.rejectedMessage(data)
             }
-            if(data.bookingStatus == 'BOOKING_CREATED'){
+            if(data.trigger == 'BOOKING_CREATED'){
                 message = booking.createdMessage(data)
             }
-            if(data.bookingStatus == 'BOOKING_RESCHEDULE'){
+            if(data.trigger == 'BOOKING_RESCHEDULE'){
                 message = booking.rescheduleMessage(data)
             }
-            if(data.bookingStatus == 'BOOKING_CANCELLED'){
+            if(data.trigger == 'BOOKING_CANCELLED'){
                 message = booking.cancelledMessage(data)
             }
             const broker = await sendMessage(sock, data.broker.whatsapp, message)
-            const agent = await sendMessage(sock, data.agent.whatsapp, message)
+            const agent = await sendMessage(sock, data.booker.whatsapp, message)
             return {broker, agent}
         } catch (error) {
             console.error('Erro no envio da mensagem:', error);
@@ -52,19 +51,19 @@ export const notification = {
         }
         let message = ""
         try {
-            if(data.bookingStatus == 'BOOKING_REQUESTED'){
+            if(data.trigger == 'BOOKING_REQUESTED'){
                 message = photographer.requestedMessage(data)
             }
-            if(data.bookingStatus == 'BOOKING_REJECTED'){
+            if(data.trigger == 'BOOKING_REJECTED'){
                 message = photographer.rejectedMessage(data)
             }
-            if(data.bookingStatus == 'BOOKING_CREATED'){
+            if(data.trigger == 'BOOKING_CREATED'){
                 message = photographer.createdMessage(data)
             }
-            if(data.bookingStatus == 'BOOKING_RESCHEDULE'){
+            if(data.trigger == 'BOOKING_RESCHEDULE'){
                 message = photographer.rescheduleMessage(data)
             }
-            if(data.bookingStatus == 'BOOKING_CANCELLED'){
+            if(data.trigger == 'BOOKING_CANCELLED'){
                 message = photographer.cancelledMessage(data)
             }
             if(!photo.whatsappId){
@@ -82,7 +81,7 @@ export const notification = {
 }
 
 
-export async function defineBookingStatus(booking: any, status: any){
+export async function defineBookingStatus(booking: any, status: any, reason?: any){
     const options: any = {
         method: 'POST',
         headers: {
@@ -98,7 +97,7 @@ export async function defineBookingStatus(booking: any, status: any){
           })
     }
     if(status == 'decline'){
-        options.data = '{"reason":"Recusado pelo fotógrafo"}'
+        options.data = {reason}
         await axios(`https://api.cal.com/v2/bookings/${booking}/decline`, options)
         .then(response => {
             console.log(response.data);
@@ -110,5 +109,4 @@ export async function defineBookingStatus(booking: any, status: any){
             console.log(response.data);
      })
     }
-
 }
