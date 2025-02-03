@@ -55,6 +55,11 @@ export const handle = {
                 }
             } else {
                 try {
+                    const isBooking = await Booking.find({'id': data.id})
+                    if(isBooking.length === 0){
+                        const newBooking = new Booking(data)
+                        await newBooking.save()   
+                    }
                     await Booking.replaceOne({id: data.id}, data)
                 } catch (error) {
                     console.log('Erro ao salvar os dados:', error)
