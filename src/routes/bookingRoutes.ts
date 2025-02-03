@@ -37,7 +37,8 @@ router.get('/list', async (req, res) => {
     try {
         const allBookings = await getAllBookings()
         if(allBookings){
-            res.status(200).json({data: allBookings})
+            console.log('Listagem de agendamentos consultada')
+            res.status(200).json({allBookings})
         }    
     } catch (error) {
         console.log(error)
