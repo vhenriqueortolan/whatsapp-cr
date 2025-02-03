@@ -147,6 +147,10 @@ export async function listenMessages(sock: WASocket){
                     photo.whatsappId = remoteJid
                     await photo.save()
                     await sock.sendMessage(remoteJid, { text: "Grupo salvo!" });
+                    console.log(`Grupo salvo para o usuário ${username}`)
+                  } else {
+                    await sock.sendMessage(remoteJid, { text: `Não encontrei o usuário ${username}` });
+                    console.log(`Não encontrei o usuário ${username}`)
                   }
                 } catch (error: any) {
                   await sock.sendMessage(remoteJid, { text: `Ops! Erro pra salvar o grupo: ${error.message}` });
