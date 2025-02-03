@@ -128,9 +128,9 @@ export async function removeSessionFromDB(userId: Types.ObjectId) {
     }
 }
 
-export async function registerPhotographer(name: string, username: string, password: string, whatsappId?: string){
+export async function registerPhotographer(name: string, username: string, password: string, role: string, whatsappId?: string){
     try {
-        const newPhotographer = new Photographer({name, username, password})
+        const newPhotographer = new Photographer({name, username, password, role, whatsappId})
         await newPhotographer.save()
     } catch (error: any) {
         console.error(error)
@@ -140,7 +140,7 @@ export async function registerPhotographer(name: string, username: string, passw
 
 export async function listPhotographers(){
     try {
-        const photographers = await Photographer.find().select('name username')
+        const photographers = await Photographer.find().select('name username role')
         if (!photographers){
             throw new Error('Nenhum usuário encontrado')
         }
@@ -150,7 +150,7 @@ export async function listPhotographers(){
     }
 }
 
-export async function updatePhotographer(photographerId: Types.ObjectId, name?: string, whatsappId?: string, username?: string, password?: string ){
+export async function updatePhotographer(photographerId: Types.ObjectId, name?: string, whatsappId?: string, username?: string, password?: string, role?: string ){
     try {
         const photographer = await Photographer.findById(photographerId)
         if (!photographer){
@@ -160,6 +160,7 @@ export async function updatePhotographer(photographerId: Types.ObjectId, name?: 
         photographer.whatsappId = whatsappId || photographer.whatsappId
         photographer.username = username || photographer.username
         photographer.password = password || photographer.password
+        photographer.role = role || photographer.role
 
         await photographer.save()
         return {status: 'success', message: 'Usuário atualizado com sucesso'}

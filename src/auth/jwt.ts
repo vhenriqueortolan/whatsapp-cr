@@ -5,11 +5,12 @@ import { Types } from 'mongoose'
 dotenv.config()
 const secret = process.env.SECRET as string
 
-export async function generateToken(userId: Types.ObjectId, role: string, name: string){
+export async function generateToken(userId: Types.ObjectId, role: string, name: string, username: string){
     const payload = {
         userId,
         role,
-        name
+        name,
+        username
     }
     const token = jsonwebtoken.sign({...payload}, secret, {expiresIn: '7d'})
     return token

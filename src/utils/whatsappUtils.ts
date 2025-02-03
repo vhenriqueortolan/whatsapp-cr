@@ -2,6 +2,8 @@ import { removeSessionFromDB } from "./dbUtils.js";
 import { Types } from "mongoose";
 import { instances } from "../services/whatsappService.js";
 import { WASocket } from "@whiskeysockets/baileys";
+import Photographer from "../models/Photographer.js";
+import Booking from "../models/Booking.js";
 
 // Função para enviar mensagem
 export async function sendMessage(sock: any, to: string, message: string) {
@@ -122,4 +124,98 @@ export async function getGroupMetadata(sock: WASocket, groupJid: string){
   } catch (err) {
       console.error('Erro ao verificar chaves dos participantes:', err);
   }
+}
+
+   //Monitora novas mensagens para salvar um grupo no Banco de Dados
+export async function listenMessages(sock: WASocket){
+  sock.ev.on("messages.upsert", async (message) => {
+    const { messages, type } = message;
+
+    if (type === "notify") { // Mensagem nova
+        const msg = messages[0];
+        
+        if (!msg.key.fromMe) { // Filtra mensagens recebidas
+            const remoteJid: any = msg.key.remoteJid; // ID do remetente (grupo ou contato)
+            const isGroup = remoteJid.endsWith("@g.us"); // Verifica se é grupo
+            const messageText = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
+            if(isGroup){
+              if (messageText === '#salvargrupo'){
+                try {
+                  const [photo] = await Photographer.find()
+                  photo.whatsappId = remoteJid
+                  await photo.save()
+                  await sock.sendMessage(remoteJid, { text: "Grupo salvo!" });
+                } catch (error: any) {
+                  await sock.sendMessage(remoteJid, { text: `Ops! Erro pra salvar o grupo: ${error.message}` });
+                }
+              }
+            }
+            if (messageText === '#hoje'){
+              try {
+                  const today = new Intl.DateTimeFormat('pt-BR').format(new Date(
+                  new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })
+                ));
+                const bookings = await Booking.find({'schedule.start.day': today})
+                .sort({ 'schedule.start.hour': 1 }); // Ordena de forma crescente (1 = ascendente)
+      
+                if(bookings.length == 0){
+                  sock.sendMessage(remoteJid, {text: 'Hmmm... Vi aqui e hoje não tem nenhum agendamento até agora'})
+                  return
+                }
+                let text = `Aqui estão os agendamentos que encontrei para o dia hoje:`
+                bookings.forEach((agendamento: any) => {
+                  const { start, end } = agendamento.schedule;
+                  const { address, neighborhood } = agendamento.property;
+                  const { services } = agendamento;
+                  let { name: corretor, whatsapp: corretorWhatsapp } = agendamento.broker;
+                  const { notes } = agendamento;
+              
+                  // Construa a parte da mensagem para o agendamento
+                  text += `
+\n
+Endereço: *${address}, ${neighborhood}*
+Horário: *${start.hour} - ${end}*
+Serviços: ${services}
+Corretor: ${corretor} - WhatsApp: ${corretorWhatsapp.slice(2)}
+${notes ? `Obs: ${notes}` : ''}`;  // Adiciona um espaçamento entre os agendamentos
+                });
+                sock.sendMessage(remoteJid, {text})
+              } catch (error:any) {
+                await sock.sendMessage(remoteJid, { text: `Ops! Erro: ${error.message}` });
+              }
+            }
+            if (messageText?.includes('#data')){
+              const date: any = messageText.split(' ')[1]
+              try {
+                const bookings: any = await Booking.find({'schedule.start.day': date})
+                .sort({ 'schedule.start.hour': 1 }); // Ordena de forma crescente (1 = ascendente)
+                if(bookings.length == 0){
+                  sock.sendMessage(remoteJid, {text: `Hmmm... Ninguém marcou fotos para o dia ${date} até agora, o jeito é esperar...`})
+                  return
+                }
+                let text = `Aqui estão os agendamentos que encontrei para o dia ${date}:`
+                bookings.forEach((agendamento: any) => {
+                  const { start, end } = agendamento.schedule;
+                  const { address, neighborhood } = agendamento.property;
+                  const { services } = agendamento;
+                  let { name: corretor, whatsapp: corretorWhatsapp } = agendamento.broker;
+                  const { notes } = agendamento;
+              
+                  // Construa a parte da mensagem para o agendamento
+                  text += `
+\n
+Endereço: *${address}, ${neighborhood}*
+Horário: *${start.hour} - ${end}*
+Serviços: ${services}
+Corretor: ${corretor} - WhatsApp: ${corretorWhatsapp.slice(2)}
+${notes ? `Obs: ${notes}` : ''}`;  // Adiciona um espaçamento entre os agendamentos
+                });
+                sock.sendMessage(remoteJid, {text})
+              } catch (error:any) {
+                await sock.sendMessage(remoteJid, { text: `Ops! Erro: ${error.message}` });
+              }
+            }
+        }
+    }
+});
 }

@@ -10,6 +10,10 @@ const photographerSchema = new mongoose.Schema(
             type: String,
             required: false
         },
+        role: {
+            type: String,
+            required: false
+        },
         username: { 
             type: String, 
             required: true, 

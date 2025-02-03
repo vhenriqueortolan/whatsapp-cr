@@ -6,11 +6,11 @@ const router = Router();
 
 // Rota para registrar usuário
 router.post('/register', async (req: any, res: any) => {
-    const {name, whatsappId, username, password} = req.body
+    const {name, whatsappId, username, role, password} = req.body
     console.log({name, whatsappId})
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        await registerPhotographer(name, username, hashedPassword, whatsappId)
+        await registerPhotographer(name, username, hashedPassword, role, whatsappId)
         res.status(200).json({status: 'success', message: 'Fotógrafo criado com sucesso'})
     } catch (error: any) {
         res.status(500).json({status: 'failed', message: error.message})

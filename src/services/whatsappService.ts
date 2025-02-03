@@ -3,8 +3,7 @@ import dotenv from 'dotenv'
 import { Types } from 'mongoose'
 import { Boom } from '@hapi/boom';
 import { getSessionFromDB, saveSessionToDB } from '../utils/dbUtils.js';
-import { disconnectWhatsApp } from '../utils/whatsappUtils.js';
-import Photographer from '../models/Photographer.js';
+import { disconnectWhatsApp, listenMessages } from '../utils/whatsappUtils.js';
 
 dotenv.config()
 
@@ -95,35 +94,11 @@ async function connectToWhatsApp(userId: string, phone?: string): Promise<WASock
       console.log(`New WhatsApp instance created for user ${userId}`);
   }
 });
-  //Monitora novas mensagens para salvar um grupo no Banco de Dados
-  sock.ev.on("messages.upsert", async (message) => {
-    const { messages, type } = message;
-
-    if (type === "notify") { // Mensagem nova
-        const msg = messages[0];
-        
-        if (!msg.key.fromMe) { // Filtra mensagens recebidas
-            const remoteJid: any = msg.key.remoteJid; // ID do remetente (grupo ou contato)
-            const isGroup = remoteJid.endsWith("@g.us"); // Verifica se é grupo
-            if(isGroup){
-              const messageText = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
-              if (messageText === '#salvargrupo'){
-                try {
-                  const [photo] = await Photographer.find()
-                  photo.whatsappId = remoteJid
-                  await photo.save()
-                  await sock.sendMessage(remoteJid, { text: "Grupo salvo!" });
-                } catch (error: any) {
-                  await sock.sendMessage(remoteJid, { text: `Ops! Erro pra salvar o grupo: ${error.message}` });
-                }
-              }
-            }
-        }
-    }
-});
 
   // Monitorando atualizações de credenciais
   sock.ev.on('creds.update', await saveCreds);
+
+  listenMessages(sock)
 
   // Monitorando mensagens recebidas
   sock.ev.on('messages.upsert', async (msg) => {
