@@ -9,6 +9,7 @@ import { generateToken } from '../auth/jwt.js';
 const router = express.Router();
 
 router.post('/notification/:userId', async (req, res) =>{
+    console.log('Requisição para nova notificação de agendamento')
     const rawData = req.body
     const {userId} = req.params
     try {
@@ -19,6 +20,7 @@ router.post('/notification/:userId', async (req, res) =>{
         res.status(200).json({...sendBookers, ...sendPhotographer});
         // 
     } catch (error: any) {
+        console.log({ message: 'Erro ao enviar mensagem', error: error.message })
         res.status(500).json({ message: 'Erro ao enviar mensagem', error: error.message });
     }
 })
