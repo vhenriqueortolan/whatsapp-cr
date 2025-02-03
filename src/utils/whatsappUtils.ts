@@ -139,12 +139,15 @@ export async function listenMessages(sock: WASocket){
             const isGroup = remoteJid.endsWith("@g.us"); // Verifica se é grupo
             const messageText = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
             if(isGroup){
-              if (messageText === '#salvargrupo'){
+              if (messageText?.includes('#salvargrupo')){
                 try {
-                  const [photo] = await Photographer.find()
-                  photo.whatsappId = remoteJid
-                  await photo.save()
-                  await sock.sendMessage(remoteJid, { text: "Grupo salvo!" });
+                  const username = messageText.split(' ')[1]
+                  const photo = await Photographer.findOne({'username': username})
+                  if(photo){
+                    photo.whatsappId = remoteJid
+                    await photo.save()
+                    await sock.sendMessage(remoteJid, { text: "Grupo salvo!" });
+                  }
                 } catch (error: any) {
                   await sock.sendMessage(remoteJid, { text: `Ops! Erro pra salvar o grupo: ${error.message}` });
                 }
