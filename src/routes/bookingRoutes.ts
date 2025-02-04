@@ -12,9 +12,9 @@ router.post('/notification/:userId', async (req, res) =>{
     try {
         const data = await handle.bookingData(rawData)
         console.log({...data})
-        // const sendPhotographer = await notification.toPhotographer(data, userId)
-        // const sendBookers = await notification.toBroker(data, userId)
-        res.status(200).json({}); // ...sendBookers, ...sendPhotographer
+        const sendPhotographer = await notification.toPhotographer(data, userId)
+        const sendBookers = await notification.toBroker(data, userId)
+        res.status(200).json({ ...sendBookers, ...sendPhotographer}); //
     } catch (error: any) {
         console.log({ message: 'Erro ao enviar mensagem', error: error.message })
         res.status(500).json({ message: 'Erro ao enviar mensagem', error: error.message });
