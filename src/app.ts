@@ -5,7 +5,7 @@ import whatsappRoutes from './routes/whatsappRoutes.js';
 import userRoutes from './routes/userRoutes.js'
 import authRoutes from './routes/authRoutes.js'
 import bookingRoutes from './routes/bookingRoutes.js'
-import bookingRoutes from './routes/ping.js'
+import ping from './routes/ping.js'
 import bodyParser from 'body-parser';
 import cors from 'cors'
 import dotenv from 'dotenv'
