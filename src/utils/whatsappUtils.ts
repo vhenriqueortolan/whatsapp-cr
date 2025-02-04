@@ -2,8 +2,8 @@ import { removeSessionFromDB } from "./dbUtils.js";
 import { Types } from "mongoose";
 import { instances } from "../services/whatsappService.js";
 import { WASocket } from "@whiskeysockets/baileys";
-import Photographer from "../models/Photographer.js";
 import Booking from "../models/Booking.js";
+import User from "../models/User.js";
 
 // Função para enviar mensagem
 export async function sendMessage(sock: any, to: string, message: string) {
@@ -142,11 +142,11 @@ export async function listenMessages(sock: WASocket){
               if (messageText?.includes('#salvargrupo')){
                 try {
                   const username = messageText.split(' ')[1]
-                  const photo = await Photographer.findOne({'username': username})
+                  const photo = await User.findOne({'username': username})
                   if(photo){
                     photo.whatsappId = remoteJid
                     await photo.save()
-                    await sock.sendMessage(remoteJid, { text: "Grupo salvo!" });
+                    await sock.sendMessage(remoteJid, { text: `Grupo salvo para o usuário ${username}`});
                     console.log(`Grupo salvo para o usuário ${username}`)
                   } else {
                     await sock.sendMessage(remoteJid, { text: `Não encontrei o usuário ${username}` });

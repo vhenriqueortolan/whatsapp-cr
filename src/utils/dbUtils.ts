@@ -1,5 +1,4 @@
 import User from "../models/User.js";
-import Photographer from "../models/Photographer.js";
 import Session from "../models/Session.js";
 import { Types } from 'mongoose'
 import { BufferJSON } from "@whiskeysockets/baileys";
@@ -7,29 +6,28 @@ import { connectToWhatsApp } from "../services/whatsappService.js";
 import Booking from "../models/Booking.js";
 
 
-export async function registerUser(username: string, password: string, email: string, name: string, role: string){
+export async function registerUser(username: string, password: string, email: string, name: string, role: string, whatsappId?: string){
     try {
-        const newUser = new User({username, password, email, name, role})
+        const newUser = new User({username, password, email, name, role, whatsappId})
         await newUser.save()
     } catch (error: any) {
-        console.log(error.message)
         throw error
     } 
 }
 
 export async function listUsers(){
     try {
-        const users = await User.find().select('username email name role')
+        const users = await User.find().select('username email name role whatsappId')
         if (!users){
             throw new Error('Nenhum usuário encontrado')
         }
         return users
     } catch (error: any) {
-        throw error.message
+        throw error
     }
 }
 
-export async function updateUser(userId: Types.ObjectId, username?: string, password?: string, email?: string, name?: string, role?: string){
+export async function updateUser(userId: Types.ObjectId, username?: string, password?: string, email?: string, name?: string, role?: string, whatsappId?: string){
     try {
         const user = await User.findById(userId)
         if (!user){
@@ -40,12 +38,13 @@ export async function updateUser(userId: Types.ObjectId, username?: string, pass
         user.email = email || user.email
         user.name = name || user.name
         user.role = role || user.role
+        user.whatsappId = whatsappId || user.whatsappId
 
         await user.save()
         return {status: 'success', message: 'Usuário atualizado com sucesso'}
 
     } catch (error: any) {
-        throw error.message
+        throw error
     }
 }
 
@@ -58,7 +57,7 @@ export async function deleteUser(userId: Types.ObjectId){
         await User.findByIdAndDelete(userId)
         return {status: 'success', message: 'Usuário deletado com sucesso'}
     } catch (error: any) {
-        throw error.message
+        throw error
     }
 }
 
@@ -125,61 +124,6 @@ export async function removeSessionFromDB(userId: Types.ObjectId) {
         console.log(`Sessão do usuário ${userId} removida do banco de dados.`);
     } else {
         console.log(`Nenhuma sessão encontrada para o usuário ${userId}.`);
-    }
-}
-
-export async function registerPhotographer(name: string, username: string, password: string, role: string, whatsappId?: string){
-    try {
-        const newPhotographer = new Photographer({name, username, password, role, whatsappId})
-        await newPhotographer.save()
-    } catch (error: any) {
-        console.error(error)
-        throw error
-    } 
-}
-
-export async function listPhotographers(){
-    try {
-        const photographers = await Photographer.find().select('name username role')
-        if (!photographers){
-            throw new Error('Nenhum usuário encontrado')
-        }
-        return photographers
-    } catch (error: any) {
-        throw error.message
-    }
-}
-
-export async function updatePhotographer(photographerId: Types.ObjectId, name?: string, whatsappId?: string, username?: string, password?: string, role?: string ){
-    try {
-        const photographer = await Photographer.findById(photographerId)
-        if (!photographer){
-            return {status: null, message: 'Nenhum usuário encontrado'}
-        }
-        photographer.name = name || photographer.name
-        photographer.whatsappId = whatsappId || photographer.whatsappId
-        photographer.username = username || photographer.username
-        photographer.password = password || photographer.password
-        photographer.role = role || photographer.role
-
-        await photographer.save()
-        return {status: 'success', message: 'Usuário atualizado com sucesso'}
-
-    } catch (error: any) {
-        throw error.message
-    }
-}
-
-export async function deletePhotographer(photographerId: Types.ObjectId){
-    try {
-        const photographer = await Photographer.findById(photographerId)
-        if (!photographer){
-            return {status: null, message: 'Nenhum usuário encontrado'}
-        }
-        await Photographer.findByIdAndDelete(photographerId)
-        return {status: 'success', message: 'Usuário deletado com sucesso'}
-    } catch (error: any) {
-        throw error.message
     }
 }
 

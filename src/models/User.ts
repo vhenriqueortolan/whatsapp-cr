@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
         name: { type: String, required: true },
         sessionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Session' }, // Referência ao modelo de sessão
         role: { type: String, default: false }, // Define se o usuário é administrador
+        whatsappId: { type: String, default: false, unique: true }
     },
     {
         timestamps: true

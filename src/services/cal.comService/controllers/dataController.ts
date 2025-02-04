@@ -55,12 +55,16 @@ export const handle = {
                 }
             } else {
                 try {
+                    if(data.trigger === 'BOOKING_RESCHEDULE'){
+                        await Booking.findOneAndReplace({'id': rawData.payload.rescheduleUid}, data)
+                    }
                     const isBooking = await Booking.find({'id': data.id})
                     if(isBooking.length === 0){
                         const newBooking = new Booking(data)
                         await newBooking.save()   
+                    } else{
+                        await Booking.replaceOne({id: data.id}, data)
                     }
-                    await Booking.replaceOne({id: data.id}, data)
                 } catch (error) {
                     console.log('Erro ao salvar os dados:', error)
                     throw error

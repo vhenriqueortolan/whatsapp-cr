@@ -4,7 +4,6 @@ import { auth } from './auth/jwt.js';
 import whatsappRoutes from './routes/whatsappRoutes.js';
 import userRoutes from './routes/userRoutes.js'
 import authRoutes from './routes/authRoutes.js'
-import photographerRoutes from './routes/photographerRoutes.js'
 import bookingRoutes from './routes/bookingRoutes.js'
 import bodyParser from 'body-parser';
 import cors from 'cors'
@@ -34,7 +33,6 @@ app.use(bodyParser.json())
 app.use('/', authRoutes)
 app.use('/whatsapp', whatsappRoutes)
 app.use('/user', auth, userRoutes)
-app.use('/photographer', auth, photographerRoutes)
 app.use('/booking', bookingRoutes)
 
 // Conecta Banco de Dados

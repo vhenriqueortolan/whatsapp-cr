@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import axios from "axios";
 import { getGroupMetadata, getMessageStatus, sendMessage } from "../../../utils/whatsappUtils.js";
 import { instances } from "../../whatsappService.js";
-import Photographer from '../../../models/Photographer.js';
+import User from '../../../models/User.js';
 
 dotenv.config();
 
@@ -41,7 +41,10 @@ export const notification = {
 },
     toPhotographer: async (data: any, userId: any)=>{
         const sock = await instances.get(userId)
-        const [photo] = await Photographer.find()
+        const photo = await User.findOne({'role': 'photo'})
+        if(!photo){
+            return 
+        }
         data.photographer = {
             name: photo.name,
         }
