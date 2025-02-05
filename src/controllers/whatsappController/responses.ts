@@ -10,9 +10,11 @@ interface Booking{
         start: {hour: string},
         end: string,
     }
-    property: string,
-    address: string,
-    neighborhood: string,
+    property: { 
+        id: string,
+        address: string,
+        neighborhood: string,
+    }
     services: string,
     broker: { name: string, whatsapp: string},
     notes: string
@@ -88,10 +90,10 @@ const responses = [
 const texts = {
     bookingList:(booking: Booking)=> `
 
-Endereço: *${booking.address}, ${booking.neighborhood}*
+Endereço: *${booking.property.address}, ${booking.property.neighborhood}*
 Horário: *${booking.schedule.start.hour} - ${booking.schedule.end}*
 Serviços: ${booking.services}
-Imóvel: ${booking.property}
+Imóvel: ${booking.property.id}
 Corretor: ${booking.broker.name} - WhatsApp: ${booking.broker.whatsapp.slice(2)}
 ${booking.notes ? `${booking.notes}` : ''}`
 
