@@ -89,7 +89,7 @@ const texts = {
     bookingList:(booking: Booking)=> `
 
 Endereço: *${booking.address}, ${booking.neighborhood}*
-Horário: *${booking.start.hour} - ${booking.end}*
+Horário: *${booking.schedule.start.hour} - ${booking.schedule.end}*
 Serviços: ${booking.services}
 Imóvel: ${booking.property}
 Corretor: ${booking.broker.name} - WhatsApp: ${booking.broker.whatsapp.slice(2)}
