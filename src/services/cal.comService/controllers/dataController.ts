@@ -40,9 +40,11 @@ export const handle = {
             }
             if (rawData.triggerEvent == 'BOOKING_RESCHEDULE' && rawData.payload.responses.rescheduleReason.value){
                 data.rescheduleReason = `Motivo: ${rawData.payload.responses.rescheduleReason.value}`
+                data.id = rawData.payload.rescheduleUid
             }
             if (rawData.triggerEvent == 'BOOKING_REQUESTED' && rawData.payload.rescheduleId){
                 data.trigger = 'BOOKING_RESCHEDULE'
+                data.id = rawData.payload.rescheduleUid
             }
             if(data.trigger == 'BOOKING_REQUESTED'){
                 try {
@@ -57,6 +59,7 @@ export const handle = {
                 try {
                     if(data.trigger === 'BOOKING_RESCHEDULE'){
                         await Booking.findOneAndReplace({'id': rawData.payload.rescheduleUid}, data)
+                        return data
                     }
                     const isBooking = await Booking.find({'id': data.id})
                     if(isBooking.length === 0){
