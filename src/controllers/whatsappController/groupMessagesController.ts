@@ -14,8 +14,13 @@ export function listenGroupMessages(sock: WASocket){
             const msg = message.message?.conversation || '';
             const call = await responses.find(response => msg.includes(response.call))
             if(call){
-                const text = await call.action({msg, whatsappId})
-                await sock.sendMessage(whatsappId, { text })
+                await call.action({msg, whatsappId})
+                    .then(async (text)=>{
+                        await sock.sendMessage(whatsappId, { text })
+                    })
+                    .catch(async (text)=>{
+                        await sock.sendMessage(whatsappId, { text })
+                    })
             }
             console.log(`Nova mensagem no grupo ${whatsappId} de ${senderJid}: ${msg}`);
         }

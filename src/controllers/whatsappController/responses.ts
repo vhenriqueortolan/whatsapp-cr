@@ -6,8 +6,10 @@ interface CallContent{
 }
 
 interface Booking{
-    start: {hour: string},
-    end: string,
+    schedule: {
+        start: {hour: string},
+        end: string,
+    }
     property: string,
     address: string,
     neighborhood: string,
