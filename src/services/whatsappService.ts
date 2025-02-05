@@ -3,7 +3,9 @@ import dotenv from 'dotenv'
 import { Types } from 'mongoose'
 import { Boom } from '@hapi/boom';
 import { getSessionFromDB, saveSessionToDB } from '../utils/dbUtils.js';
-import { disconnectWhatsApp, listenMessages } from '../utils/whatsappUtils.js';
+import { disconnectWhatsApp } from '../utils/whatsappUtils.js';
+import { listenGroupMessages } from '../controllers/whatsappController/groupMessagesController.js';
+import { listenMessages } from '../controllers/whatsappController/chatMessagesController.js'
 
 dotenv.config()
 
@@ -77,7 +79,12 @@ async function connectToWhatsApp(userId: string, phone?: string): Promise<WASock
       const shouldReconnect =
           (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
       console.log('Connection closed due to', lastDisconnect?.error, ', reconnecting:', shouldReconnect);
-
+      
+      // Se a instância já estiver no cache será removida
+      if (instances.has(userId)) {
+        instances.delete(userId);
+        console.log(`Instância removida do cache para o usuário ${userId}`);
+      }
       // Remove do cache se desconectado permanentemente
       if (!shouldReconnect) {
           disconnectWhatsApp(userId as unknown as Types.ObjectId)
@@ -96,25 +103,12 @@ async function connectToWhatsApp(userId: string, phone?: string): Promise<WASock
 });
 
   // Monitorando atualizações de credenciais
-  sock.ev.on('creds.update', await saveCreds);
+  sock.ev.on('creds.update', saveCreds);
 
   listenMessages(sock)
 
-  // Monitorando mensagens recebidas
-  sock.ev.on('messages.upsert', async (msg) => {
-    const messages = msg.messages;
+  listenGroupMessages(sock)
 
-    for (const message of messages) {
-        // Verifica se a mensagem veio de um grupo
-        if (message.key.remoteJid?.endsWith('@g.us')) {
-            const groupJid = message.key.remoteJid; // ID do grupo
-            const senderJid = message.key.participant; // ID do remetente
-            const messageContent = message.message?.conversation || '';
-
-            console.log(`Nova mensagem no grupo ${groupJid} de ${senderJid}: ${messageContent}`);
-        }
-      }
-    })
     sock.ev.on('groups.update', async ([event]) => {
       const metadata = await sock.groupMetadata(event.id as string);
       groupCache.set(event.id, metadata);

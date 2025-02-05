@@ -48,6 +48,22 @@ export async function updateUser(userId: Types.ObjectId, username?: string, pass
     }
 }
 
+export async function findAndUpdateWhatsappId(username: string, whatsappId: string){
+    try {
+        const user = await User.findOne({username})
+        if (!user){
+            return null
+        }
+        user.whatsappId = whatsappId 
+
+        await user.save()
+        return {status: 'success', message: 'Usuário atualizado com sucesso'}
+
+    } catch (error: any) {
+        throw error
+    }
+}
+
 export async function deleteUser(userId: Types.ObjectId){
     try {
         const user = await User.findById(userId)
@@ -131,6 +147,16 @@ export async function getAllBookings(){
     try {
         const allBookings = await Booking.find()
         return allBookings
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function findBookingByDate(date: string){
+    try {
+        const bookings = await Booking.find({'schedule.start.day': date})
+            .sort({ 'schedule.start.hour': 1 }); // Ordena de forma crescente (1 = ascendente)
+            return bookings
     } catch (error) {
         throw error
     }
