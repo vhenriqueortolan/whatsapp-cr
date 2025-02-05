@@ -76,7 +76,8 @@ export const photographer = {
 Dia ${data.schedule.start.day}
 A partir das ${data.schedule.start.hour} até ${data.schedule.end}
 Serviços: ${data.services}
-        
+
+Imóvel: ${data.property.id}
 Endereço: ${data.property.address}
 Bairro: ${data.property.neighborhood}
 Corretor responsável: ${data.broker.name}
@@ -84,10 +85,12 @@ Vai acompanhar: ${data.broker.accompany}
 ${data?.notes || ''}
         
 > Para *confirmar* o agendamento clique aqui https://whatsapp-cr.onrender.com/booking/${data.id}/confirm
+> Para *reagendar* clique aqui ${data.page}
 > Para *recusar* clique aqui https://whatsapp-cr.onrender.com/booking/${data.id}/decline`,
 
     rejectedMessage: (data: any)=>`Olá, ${data.photographer.name}!! Você recusou um agendamento com a agência ${data.agency}:
 
+Imóvel: ${data.property.id}
 ${data?.rejectedReason || 'O motivo não foi informado.'}
 
 Dia: ${data.schedule.start.day} as ${data.schedule.start.hour}`,
@@ -97,7 +100,8 @@ Dia: ${data.schedule.start.day} as ${data.schedule.start.hour}`,
 Dia ${data.schedule.start.day}
 A partir das ${data.schedule.start.hour} até ${data.schedule.end}
 Serviços: ${data.services}
-        
+
+Imóvel: ${data.property.id}
 Endereço: ${data.property.address}
 Bairro: ${data.property.neighborhood}
 Corretor responsável: ${data.broker.name}
@@ -112,17 +116,20 @@ ${data?.notes || ''}
 Dia ${data.schedule.start.day}
 A partir das ${data.schedule.start.hour} até ${data.schedule.end}
 Serviços: ${data.services}
-        
+
+Imóvel: ${data.property.id}
 Endereço: ${data.property.address}
 Bairro: ${data.property.neighborhood}
 Corretor responsável: ${data.broker.name}
 Vai acompanhar: ${data.broker.accompany}
 ${data?.rescheduleReason || 'O motivo do reagendamento não foi informado.'}
-        
+
+${data.status === 'PENDING' ? > Para *confirmar* o agendamento clique aqui https://whatsapp-cr.onrender.com/booking/${data.id}/confirm : ''}         
 > Para *cancelar* clique aqui https://whatsapp-cr.onrender.com/booking/${data.id}/cancel`,
 
     cancelledMessage: (data: any)=>`Olá, ${data.photographer.name}!! Um agendamento com a agência ${data.agency} foi cancelado:
-        
+
+Imóvel: ${data.property.id}
 ${data?.cancelledReason || 'O motivo não foi informado.'}
 
 Dia: ${data.schedule.start.day} as ${data.schedule.start.hour}`
