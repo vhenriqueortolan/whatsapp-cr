@@ -97,6 +97,7 @@ async function connectToWhatsApp(userId: string, phone?: string): Promise<WASock
   } else if (connection === 'open') {
       console.log('Opened connection for user', userId);
         // Salva a instância no cache
+      await saveSessionToDB(userId as unknown as Types.ObjectId, state.creds, keys);
       instances.set(userId, sock);
       console.log(`New WhatsApp instance created for user ${userId}`);
   }
