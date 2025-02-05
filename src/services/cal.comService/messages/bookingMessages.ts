@@ -124,7 +124,7 @@ Corretor responsável: ${data.broker.name}
 Vai acompanhar: ${data.broker.accompany}
 ${data?.rescheduleReason || 'O motivo do reagendamento não foi informado.'}
 
-${data.status === 'PENDING' ? > Para *confirmar* o agendamento clique aqui https://whatsapp-cr.onrender.com/booking/${data.id}/confirm : ''}         
+${data.status === 'PENDING' ? `> Para *confirmar* o agendamento clique aqui https://whatsapp-cr.onrender.com/booking/${data.id}/confirm` : ''}         
 > Para *cancelar* clique aqui https://whatsapp-cr.onrender.com/booking/${data.id}/cancel`,
 
     cancelledMessage: (data: any)=>`Olá, ${data.photographer.name}!! Um agendamento com a agência ${data.agency} foi cancelado:
