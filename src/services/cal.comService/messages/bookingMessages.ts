@@ -64,7 +64,7 @@ ${data?.rescheduleReason || 'O motivo do reagendamento não foi informado.'}
 
     cancelledMessage: (data: any)=> `O agendamento de fotos para o imóvel ${data.property.id}, da agência ${data.agency} foi *cancelado*.
 
-No dia ${data.schedule.day} as ${data.schedule.hour}
+No dia ${data.schedule.start.day} as ${data.schedule.start.hour}
  ${data?.cancelledReason || 'O motivo não foi informado.'}
 
 > Para agendar uma nova data para esse ou outro imóvel visite https://cal.com/creditoreal/agendar-fotos`
@@ -132,5 +132,5 @@ ${data.status === 'PENDING' ? `> Para *confirmar* o agendamento clique aqui http
 Imóvel: ${data.property.id}
 ${data?.cancelledReason || 'O motivo não foi informado.'}
 
-Dia: ${data.schedule.start.day} as ${data.schedule.start.hour}`
+O dia: ${data.schedule.start.day} as ${data.schedule.start.hour} está liberado para novos agendamentos`
 } 
