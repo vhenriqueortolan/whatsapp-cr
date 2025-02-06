@@ -1,7 +1,7 @@
 import express from 'express';
 import { notification, defineBookingStatus } from '../services/cal.comService/controllers/bookingController.js' 
 import { handle } from '../services/cal.comService/controllers/dataController.js';
-import { getAllBookings } from '../utils/dbUtils.js';
+import { findOngoingBookings } from '../utils/dbUtils.js';
 
 const router = express.Router();
 
@@ -33,10 +33,13 @@ router.get('/:bookingId/:status', async (req, res) => {
 
 router.get('/list', async (req, res) => {
     try {
-        const allBookings = await getAllBookings()
-        if(allBookings){
+        const date = new Intl.DateTimeFormat('pt-BR')
+        .format(new Date(
+        new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })));
+        const bookings = await findOngoingBookings(date)
+        if(bookings){
             console.log('Listagem de agendamentos consultada')
-            res.status(200).json({allBookings})
+            res.status(200).json({bookings})
         }    
     } catch (error) {
         console.log(error)

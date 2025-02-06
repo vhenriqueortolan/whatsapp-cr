@@ -152,12 +152,24 @@ export async function getAllBookings(){
     }
 }
 
-export async function findBookingByDate(date: string){
+export async function findOngoingBookings(date?: string) {
     try {
-        const bookings = await Booking.find({'schedule.start.day': date})
-            .sort({ 'schedule.start.hour': 1 }); // Ordena de forma crescente (1 = ascendente)
-            return bookings
+      const filter: any = { status: { $in: ['ACCEPTED', 'PENDING'] } };
+  
+      if (date) {
+        filter['schedule.start.day'] = date;
+      }
+  
+      let sortOptions: any;
+      if (date) {
+        sortOptions = { 'schedule.start.hour': 1 };
+      } else {
+        sortOptions = { 'schedule.start.day': 1, 'schedule.start.hour': 1 };
+      }
+      const bookings = await Booking.find(filter).sort(sortOptions);
+      return bookings;
     } catch (error) {
-        throw error
+      throw error;
     }
-}
+  }
+  

@@ -1,4 +1,4 @@
-import { findAndUpdateWhatsappId, findBookingByDate } from "../../utils/dbUtils.js"
+import { findAndUpdateWhatsappId, findOngoingBookings } from "../../utils/dbUtils.js"
 
 interface CallContent{
     msg: string,
@@ -6,6 +6,7 @@ interface CallContent{
 }
 
 interface Booking{
+    status: string,
     schedule: {
         start: {hour: string},
         end: string,
@@ -44,7 +45,7 @@ const responses = [
                     const date = new Intl.DateTimeFormat('pt-BR')
                     .format(new Date(
                     new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })));
-                    const bookings = await findBookingByDate(date)
+                    const bookings = await findOngoingBookings(date)
                     if(bookings.length === 0){
                         resolve('Hmmm... Vi aqui e hoje não tem nenhum agendamento até agora')
                         return
@@ -68,7 +69,7 @@ const responses = [
 
             return new Promise(async (resolve, reject)=>{
                 try {
-                    const bookings = await findBookingByDate(date)
+                    const bookings = await findOngoingBookings(date)
                     if(bookings.length === 0){
                         resolve('Hmmm... Vi aqui e hoje não tem nenhum agendamento até agora')
                         return
@@ -90,6 +91,7 @@ const responses = [
 const texts = {
     bookingList:(booking: Booking)=> `
 
+${booking.status ? '*PENDENTE*' : ''}
 Endereço: *${booking.property.address}, ${booking.property.neighborhood}*
 Horário: *${booking.schedule.start.hour} - ${booking.schedule.end}*
 Serviços: ${booking.services}
