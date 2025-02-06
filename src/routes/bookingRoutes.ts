@@ -39,10 +39,10 @@ router.get('/list', async (req, res) => {
             year: 'numeric',
             timeZone: 'America/Sao_Paulo'
           }).format(new Date());
-        const bookings = await findOngoingBookings(date)
-        if(bookings){
+        const allBookings = await findOngoingBookings(date)
+        if(allBookings){
             console.log('Listagem de agendamentos consultada')
-            res.status(200).json({bookings})
+            res.status(200).json({allBookings})
         }    
     } catch (error) {
         console.log(error)
