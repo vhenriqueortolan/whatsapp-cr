@@ -33,9 +33,12 @@ router.get('/:bookingId/:status', async (req, res) => {
 
 router.get('/list', async (req, res) => {
     try {
-        const date = new Intl.DateTimeFormat('pt-BR')
-        .format(new Date(
-        new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })));
+        const date = new Intl.DateTimeFormat('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            timeZone: 'America/Sao_Paulo'
+          }).format(new Date());
         const bookings = await findOngoingBookings(date)
         if(bookings){
             console.log('Listagem de agendamentos consultada')

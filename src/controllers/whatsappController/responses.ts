@@ -42,9 +42,12 @@ const responses = [
         action: async (content: CallContent): Promise<string> =>{
             return new Promise<string>(async (resolve, reject)=>{
                 try {
-                    const date = new Intl.DateTimeFormat('pt-BR')
-                    .format(new Date(
-                    new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })));
+                    const date = new Intl.DateTimeFormat('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        timeZone: 'America/Sao_Paulo' // Garante que a data esteja na zona correta
+                      }).format(new Date());
                     const bookings = await findOngoingBookings(date)
                     if(bookings.length === 0){
                         resolve('Hmmm... Vi aqui e hoje não tem nenhum agendamento até agora')
@@ -91,7 +94,7 @@ const responses = [
 const texts = {
     bookingList:(booking: Booking)=> `
 
-${booking.status ? '*PENDENTE*' : ''}
+${booking.status === 'PENDING' ? '*PENDENTE*' : ''}
 Endereço: *${booking.property.address}, ${booking.property.neighborhood}*
 Horário: *${booking.schedule.start.hour} - ${booking.schedule.end}*
 Serviços: ${booking.services}
