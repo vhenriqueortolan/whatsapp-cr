@@ -53,7 +53,7 @@ const responses = [
                         resolve('Hmmm... Vi aqui e hoje não tem nenhum agendamento até agora')
                         return
                     }
-                    let text = `Aqui estão os agendamentos que encontrei para o dia hoje:`
+                    let text = `Aqui estão os agendamentos que encontrei para hoje:`
                     bookings.forEach((booking: any) => {
                         text += texts.bookingList(booking) 
                     });
