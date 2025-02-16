@@ -9,8 +9,8 @@ import ping from './routes/ping.js'
 import bodyParser from 'body-parser';
 import cors from 'cors'
 import dotenv from 'dotenv'
-import { connectDB } from './services/dbService.js';
-import { initializeSessions } from './utils/dbUtils.js';
+import { connectDB } from './services/db/dbService.js';
+import { initializeSessions } from './services/db/dbUtils.js';
 import { Server } from 'socket.io';
 import initSocket from './services/socketService.js';
 
