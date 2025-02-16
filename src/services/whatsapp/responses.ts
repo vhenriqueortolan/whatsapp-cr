@@ -1,4 +1,4 @@
-import { findAndUpdateWhatsappId, findOngoingBookings } from "../../utils/dbUtils.js"
+import { findAndUpdateWhatsappId, findOngoingBookings } from "../db/dbUtils.js"
 
 interface CallContent{
     msg: string,

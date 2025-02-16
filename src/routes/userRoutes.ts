@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt'
-import {listUsers, registerUser, updateUser, deleteUser} from '../utils/dbUtils.js';
+import {listUsers, registerUser, updateUser, deleteUser} from '../services/db/dbUtils.js';
 
 const router = Router();
 

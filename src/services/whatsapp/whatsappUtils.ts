@@ -1,6 +1,6 @@
-import { removeSessionFromDB } from "./dbUtils.js";
+import { removeSessionFromDB } from "../db/dbUtils.js"
 import { Types } from "mongoose";
-import { instances } from "../services/whatsappService.js";
+import { instances } from "./whatsappService.js";
 import { WASocket } from "@whiskeysockets/baileys";
 
 // Função para enviar mensagem

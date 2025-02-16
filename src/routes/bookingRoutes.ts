@@ -1,7 +1,7 @@
 import express from 'express';
-import { notification, defineBookingStatus } from '../services/cal.comService/controllers/bookingController.js' 
-import { handle } from '../services/cal.comService/controllers/dataController.js';
-import { findOngoingBookings } from '../utils/dbUtils.js';
+import { notification, defineBookingStatus } from '../services/cal.com/controllers/bookingController.js' 
+import { handle } from '../services/cal.com/controllers/dataController.js';
+import { findOngoingBookings, startOrEndBooking } from '../services/db/dbUtils.js';
 
 const router = express.Router();
 
@@ -41,6 +41,23 @@ router.get('/list', async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({error})
+    }
+})
+
+router.get('/notification/:userId/:bookingId/:startOrEnd', async (req, res) => {
+    const {userId, bookingId, startOrEnd} = req.params
+    const {photo, video} = req.query
+    const queryParams = {
+        photo: photo === 'true',
+        video: video === 'true'
+    };
+    try {
+        const data = await startOrEndBooking(bookingId, startOrEnd, queryParams.photo, queryParams.video)
+        const send = await notification.serviceStatus(userId, data, startOrEnd)
+        res.status(200).json({ message: 'Mensagem enviada com sucesso', messageContent: send });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: 'Erro ao enviar mensagem', error: error });
     }
 })
 

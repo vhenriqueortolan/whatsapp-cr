@@ -1,8 +1,8 @@
 import { booking, photographer } from '../messages/bookingMessages.js';
 import dotenv from 'dotenv'
 import axios from "axios";
-import { getGroupMetadata, getMessageStatus, sendMessage } from "../../../utils/whatsappUtils.js";
-import { instances } from "../../whatsappService.js";
+import { getGroupMetadata, getMessageStatus, sendMessage } from "../../../services/whatsapp/whatsappUtils.js";
+import { instances } from "../../whatsapp/whatsappService.js";
 import User from '../../../models/User.js';
 
 dotenv.config();
@@ -78,6 +78,31 @@ export const notification = {
             return {status: result.status, messageId: result.messageId}
         } catch (error) {
             console.error('Erro no envio da mensagem:', error);
+            throw error
+        }
+    },
+    serviceStatus: async (userId: any, data: any, startOrEnd: string)=>{
+        try {
+            const sock = await instances.get(userId)
+            const photo = await User.findOne({'role': 'photo'})
+            let message
+            if(startOrEnd === 'start'){
+                message = booking.start(data)
+            }
+            if(startOrEnd === 'end'){
+                message = booking.end(data)
+            }
+            if (sock && photo){
+                const broker = await sendMessage(sock, data.broker.whatsapp, message as string)
+                const agent = await sendMessage(sock, data.booker.whatsapp, message as string)
+                await getGroupMetadata(sock, photo.whatsappId)
+                const result: any = await getMessageStatus(sock, photo.whatsappId, message as string)
+                return {broker, agent, photographer: {status: result.status, messageId: result.messageId}}
+            } else {
+                const err = 'Não foi possível enviar a mensagem'
+                throw new Error(err) 
+            }
+        } catch (error) {
             throw error
         }
     }

@@ -33,3 +33,10 @@ export async function delayFunction(function1: any, function2: any){
     await delay(5000)
     await function2()
 }
+
+export const today = new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'America/Sao_Paulo' // Garante que a data esteja na zona correta
+  }).format(new Date());

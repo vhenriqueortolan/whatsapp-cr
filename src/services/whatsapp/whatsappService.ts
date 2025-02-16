@@ -2,10 +2,10 @@ import {DisconnectReason, makeWASocket, initAuthCreds, AuthenticationCreds, Sign
 import dotenv from 'dotenv'
 import { Types } from 'mongoose'
 import { Boom } from '@hapi/boom';
-import { getSessionFromDB, saveSessionToDB } from '../utils/dbUtils.js';
-import { disconnectWhatsApp } from '../utils/whatsappUtils.js';
-import { listenGroupMessages } from '../controllers/whatsappController/groupMessagesController.js';
-import { listenMessages } from '../controllers/whatsappController/chatMessagesController.js'
+import { getSessionFromDB, saveSessionToDB } from '../db/dbUtils.js';
+import { disconnectWhatsApp } from './whatsappUtils.js';
+import { listenGroupMessages } from './groupMessagesController.js';
+import { listenMessages } from './chatMessagesController.js'
 
 dotenv.config()
 

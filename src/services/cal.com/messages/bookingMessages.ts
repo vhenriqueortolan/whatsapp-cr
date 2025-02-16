@@ -20,7 +20,7 @@ ${data?.notes || ''}
 
     rejectedMessage: (data: any)=>`O agendamento de fotos para o imóvel ${data.property.id}, da agência ${data.agency} foi *recusado*.
 
-No dia ${data.schedule.day} as ${data.schedule.hour}
+No dia ${data.schedule.start.day} as ${data.schedule.start.hour}
 ${data?.rejectedReason || 'O motivo não foi informado.'}
 
 > Para agendar uma nova data para esse ou outro imóvel visite https://cal.com/creditoreal/agendar-fotos`,
@@ -38,7 +38,7 @@ Corretor responsável: *${data.broker.name}*
 Vai acompanhar: ${data.broker.accompany}
 ${data?.notes || ''}
         
-*Estamos anciosos pra ver o material!*
+*Estamos ansiosos pra ver o material!*
     
 > Para alterar ou cancelar, clique aqui ${data.page}
 > Para agendar uma data para outro imóvel clique aqui https://cal.com/creditoreal/agendar-fotos`,
@@ -67,7 +67,25 @@ ${data?.rescheduleReason || 'O motivo do reagendamento não foi informado.'}
 No dia ${data.schedule.start.day} as ${data.schedule.start.hour}
  ${data?.cancelledReason || 'O motivo não foi informado.'}
 
-> Para agendar uma nova data para esse ou outro imóvel visite https://cal.com/creditoreal/agendar-fotos`
+> Para agendar uma nova data para esse ou outro imóvel visite https://cal.com/creditoreal/agendar-fotos`,
+
+    start: (data: any)=>`Olá! Passando para informar que o fotógrafo está no local para iniciar o serviço agendado:
+
+Imóvel: ${data.property.id}
+${data.property.address}
+Hora de inicio: ${data.serviceStatus.start.hour}
+Serviços: ${data.services}`,
+
+    end: (data: any)=>`Agora a notícia é melhor ainda! O fotórgrafo finalizou o serviço agendado:
+
+Imóvel: ${data.property.id}
+${data.property.address}
+Hora de finalização: ${data.serviceStatus.end.hour}
+Serviços: ${data.services}
+
+A disponibilidade do material produzido será comunicada por email.
+
+> Para agendar uma data para outro imóvel clique aqui https://cal.com/creditoreal/agendar-fotos`
 }
 
 export const photographer = {

@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
-import { connectToWhatsApp, instances } from "./whatsappService.js";
-import { disconnectWhatsApp } from "../utils/whatsappUtils.js";
+import { connectToWhatsApp, instances } from "./whatsapp/whatsappService.js";
+import { disconnectWhatsApp } from "./whatsapp/whatsappUtils.js";
 
 // Configuração do Socket.IO
 export default async function initSocket(io:Server) {

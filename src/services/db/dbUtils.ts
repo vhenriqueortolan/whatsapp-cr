@@ -1,9 +1,10 @@
-import User from "../models/User.js";
-import Session from "../models/Session.js";
+import User from "../../models/User.js";
+import Session from "../../models/Session.js";
 import { Types } from 'mongoose'
 import { BufferJSON } from "@whiskeysockets/baileys";
-import { connectToWhatsApp } from "../services/whatsappService.js";
-import Booking from "../models/Booking.js";
+import { connectToWhatsApp } from "../whatsapp/whatsappService.js";
+import Booking from "../../models/Booking.js";
+import { today, transformDateTime } from "../../utils/dataUtils.js";
 
 
 export async function registerUser(username: string, password: string, email: string, name: string, role: string, whatsappId?: string){
@@ -173,3 +174,35 @@ export async function findOngoingBookings(date?: string) {
     }
   }
   
+  export async function startOrEndBooking(bookingId: string, startOrEnd: string, photo?: boolean, video?: boolean) {
+    try {
+        const booking = await Booking.findOne({'id': bookingId})
+        if(booking){
+            if(startOrEnd === 'start'){
+                booking.serviceStatus = {
+                    start: {
+                        ok: true,
+                        day: transformDateTime(new Date()).day,
+                        hour: transformDateTime(new Date()).hour
+                    }
+                }
+            }
+            if(startOrEnd === 'end'){
+                booking.serviceStatus = {
+                    end: {
+                        ok: true,
+                        day: transformDateTime(new Date()).day,
+                        hour: transformDateTime(new Date()).hour,
+                        photo: photo,
+                        video: video
+                    }
+                }
+            }
+            await booking.save()
+            return booking
+        }
+
+    } catch (error) {
+        throw error
+    }
+  }

@@ -96,6 +96,46 @@ const bookingSchema = new mongoose.Schema(
             type: String,
             required: false,
         },
+        serviceStatus: {
+            start: {
+                ok: {
+                    type: Boolean,
+                    required: false,
+                    default: false
+                },
+                day: {
+                    type: String,
+                    required: false,
+                },
+                hour: {
+                    type: String,
+                    required: false,
+                }
+            },
+            end: {
+                ok: {
+                    type: Boolean,
+                    required: false,
+                    default: false
+                },
+                day: {
+                    type: String,
+                    required: false,
+                },
+                hour: {
+                    type: String,
+                    required: false,
+                },
+                photo: {
+                    type: Boolean,
+                    required: false,
+                },
+                video: {
+                    type: Boolean,
+                    required: false,
+                }
+            }
+        }
     }
 )
 

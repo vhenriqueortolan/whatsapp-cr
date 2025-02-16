@@ -3,9 +3,13 @@ import { transformDateTime, transformPhone } from "../../../utils/dataUtils.js"
 
 export const handle = {
     bookingData: async (rawData: any)=>{
+        const data: any = {}
         try {
-            const data: any = {}
-            data.trigger = rawData.triggerEvent
+            if (rawData.triggerEvent == 'BOOKING_REQUESTED' && rawData.payload.rescheduleId){
+                data.trigger = 'BOOKING_RESCHEDULE'
+            } else {
+                data.trigger = rawData.triggerEvent
+            }
             data.status = rawData.payload.status
             data.id = rawData.payload.uid
             data.page = `https://cal.com/booking/${rawData.payload.uid}`
@@ -40,43 +44,32 @@ export const handle = {
             }
             if (rawData.triggerEvent == 'BOOKING_RESCHEDULE' && rawData.payload.responses.rescheduleReason.value){
                 data.rescheduleReason = `Motivo: ${rawData.payload.responses.rescheduleReason.value}`
-                data.id = rawData.payload.rescheduleUid
             }
-            if (rawData.triggerEvent == 'BOOKING_REQUESTED' && rawData.payload.rescheduleId){
-                data.trigger = 'BOOKING_RESCHEDULE'
-                data.id = rawData.payload.rescheduleUid
-            }
-            if(data.trigger == 'BOOKING_REQUESTED'){
-                try {
-                    const newBooking = new Booking(data)
-                    await newBooking.save()   
-                    console.log(`Dados salvos no banco de dados: ${newBooking}`)
-                } catch (error) {
-                    console.log('Erro ao salvar os dados:', error)
-                    throw error
-                }
-            } else {
-                try {
-                    if(data.trigger === 'BOOKING_RESCHEDULE'){
-                        await Booking.findOneAndReplace({'id': rawData.payload.rescheduleUid}, data)
-                        return data
-                    }
-                    const isBooking = await Booking.find({'id': data.id})
-                    if(isBooking.length === 0){
-                        const newBooking = new Booking(data)
-                        await newBooking.save()   
-                    } else{
-                        await Booking.replaceOne({id: data.id}, data)
-                    }
-                } catch (error) {
-                    console.log('Erro ao salvar os dados:', error)
-                    throw error
-                }
-            }
-            return data
         } catch (error: any) {
             console.log('Erro no tratamento dos dados:', error)
             throw error
         }
-    }   
+        try {
+            if(data.trigger === 'BOOKING_RESCHEDULE'){
+                await Booking.findOneAndReplace({'id': rawData.payload.rescheduleUid}, data)
+            }
+            if(data.trigger === 'BOOKING_REQUESTED'){
+                const newBooking = new Booking(data)
+                await newBooking.save()   
+            } else {
+                const isBooking = await Booking.find({'id': data.id})
+                if(isBooking.length === 0){
+                    const newBooking = new Booking(data)
+                    await newBooking.save()   
+                } else {
+                    await Booking.replaceOne({id: data.id}, data)
+                }
+            }
+            console.log(`Dados salvos no banco de dados`)
+            return data
+        } catch (error) {
+            console.log('Erro ao salvar no banco de dados:', error)
+            throw error
+        }
+    }
 }
