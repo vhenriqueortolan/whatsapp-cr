@@ -123,10 +123,10 @@ export async function initializeSessions() {
             return 
         }
         // Para cada sessão, chamar a função de conexão
-        // for (const session of sessions) {
-        //     const { userId } = session;
-        //     await connectToWhatsApp(userId.toString());  // Conecta ao WhatsApp com a função que você já tem
-        // }
+        for (const session of sessions) {
+            const { userId } = session;
+            await connectToWhatsApp(userId.toString());  // Conecta ao WhatsApp com a função que você já tem
+        }
         console.log('Todas as sessões foram carregadas e conectadas!');
     } catch (error) {
         console.error('Erro ao inicializar as sessões:', error);
