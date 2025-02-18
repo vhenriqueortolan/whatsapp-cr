@@ -5,13 +5,13 @@ export const handle = {
     bookingData: async (rawData: any)=>{
         const data: any = {}
         try {
-            if (rawData.triggerEvent == 'BOOKING_REQUESTED' && rawData.payload.rescheduleId){
-                data.trigger = 'BOOKING_RESCHEDULE'
+            data.id = rawData.payload.uid
+            if (rawData.triggerEvent == 'BOOKING_REQUESTED' && rawData.payload.rescheduleUid){
+                data.trigger = 'BOOKING_RESCHEDULED'
             } else {
                 data.trigger = rawData.triggerEvent
             }
             data.status = rawData.payload.status
-            data.id = rawData.payload.uid
             data.page = `https://cal.com/booking/${rawData.payload.uid}`
             data.agency = rawData.payload.responses.agencia.value
             data.booker = {
@@ -42,7 +42,7 @@ export const handle = {
             if (rawData.triggerEvent == 'BOOKING_CANCELLED' && rawData.payload.cancellationReason){
                 data.cancelledReason = `Motivo: ${rawData.payload.cancellationReason}`
             }
-            if (rawData.triggerEvent == 'BOOKING_RESCHEDULE' && rawData.payload.responses.rescheduleReason.value){
+            if (rawData.triggerEvent == 'BOOKING_RESCHEDULED' && rawData.payload.responses.rescheduleReason.value){
                 data.rescheduleReason = `Motivo: ${rawData.payload.responses.rescheduleReason.value}`
             }
         } catch (error: any) {
@@ -50,7 +50,7 @@ export const handle = {
             throw error
         }
         try {
-            if(data.trigger === 'BOOKING_RESCHEDULE'){
+            if(data.trigger === 'BOOKING_RESCHEDULED'){
                 await Booking.findOneAndReplace({'id': rawData.payload.rescheduleUid}, data)
             }
             if(data.trigger === 'BOOKING_REQUESTED'){

@@ -5,6 +5,7 @@ import { BufferJSON } from "@whiskeysockets/baileys";
 import { connectToWhatsApp } from "../whatsapp/whatsappService.js";
 import Booking from "../../models/Booking.js";
 import { today, transformDateTime } from "../../utils/dataUtils.js";
+import { resolve } from "path";
 
 
 export async function registerUser(username: string, password: string, email: string, name: string, role: string, whatsappId?: string){
@@ -122,10 +123,10 @@ export async function initializeSessions() {
             return 
         }
         // Para cada sessão, chamar a função de conexão
-        for (const session of sessions) {
-            const { userId } = session;
-            await connectToWhatsApp(userId.toString());  // Conecta ao WhatsApp com a função que você já tem
-        }
+        // for (const session of sessions) {
+        //     const { userId } = session;
+        //     await connectToWhatsApp(userId.toString());  // Conecta ao WhatsApp com a função que você já tem
+        // }
         console.log('Todas as sessões foram carregadas e conectadas!');
     } catch (error) {
         console.error('Erro ao inicializar as sessões:', error);
@@ -178,18 +179,18 @@ export async function findOngoingBookings(date?: string) {
     try {
         const booking = await Booking.findOne({'id': bookingId})
         if(booking){
+            booking.serviceStatus = booking.serviceStatus || {}
             if(startOrEnd === 'start'){
-                booking.serviceStatus = {
-                    start: {
+                booking.serviceStatus.start =
+                    {
                         ok: true,
                         day: transformDateTime(new Date()).day,
                         hour: transformDateTime(new Date()).hour
                     }
-                }
             }
             if(startOrEnd === 'end'){
-                booking.serviceStatus = {
-                    end: {
+                booking.serviceStatus.end = 
+                    {
                         ok: true,
                         day: transformDateTime(new Date()).day,
                         hour: transformDateTime(new Date()).hour,
@@ -197,12 +198,21 @@ export async function findOngoingBookings(date?: string) {
                         video: video
                     }
                 }
-            }
             await booking.save()
             return booking
         }
-
     } catch (error) {
         throw error
     }
   }
+
+export async function findPendingBookings() {
+    return new Promise(async(resolve, reject)=>{
+        const bookings = await Booking.find({'status': 'PENDING'});
+        if (bookings){
+        resolve(bookings)
+        } else {
+        reject('Nenhuma pendência encontrada')
+        }
+    })
+}

@@ -25,7 +25,7 @@ export const notification = {
             if(data.trigger == 'BOOKING_CREATED'){
                 message = booking.createdMessage(data)
             }
-            if(data.trigger == 'BOOKING_RESCHEDULE'){
+            if(data.trigger == 'BOOKING_RESCHEDULED'){
                 message = booking.rescheduleMessage(data)
             }
             if(data.trigger == 'BOOKING_CANCELLED'){
@@ -63,7 +63,7 @@ export const notification = {
             if(data.trigger == 'BOOKING_CREATED'){
                 message = photographer.createdMessage(data)
             }
-            if(data.trigger == 'BOOKING_RESCHEDULE'){
+            if(data.trigger == 'BOOKING_RESCHEDULED'){
                 message = photographer.rescheduleMessage(data)
             }
             if(data.trigger == 'BOOKING_CANCELLED'){

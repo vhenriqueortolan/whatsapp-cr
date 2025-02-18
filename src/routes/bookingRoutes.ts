@@ -11,10 +11,9 @@ router.post('/notification/:userId', async (req, res) =>{
     const {userId} = req.params
     try {
         const data = await handle.bookingData(rawData)
-        console.log({...data})
-        const sendPhotographer = await notification.toPhotographer(data, userId)
-        const sendBookers = await notification.toBroker(data, userId)
-        res.status(200).json({ ...sendBookers, ...sendPhotographer}); //
+        // const sendPhotographer = await notification.toPhotographer(data, userId)
+        // const sendBookers = await notification.toBroker(data, userId)
+        res.status(200).json({ok: 'ok'}); // { ...sendBookers, ...sendPhotographer}
     } catch (error: any) {
         console.log({ message: 'Erro ao enviar mensagem', error: error.message })
         res.status(500).json({ message: 'Erro ao enviar mensagem', error: error.message });
@@ -53,8 +52,8 @@ router.get('/notification/:userId/:bookingId/:startOrEnd', async (req, res) => {
     };
     try {
         const data = await startOrEndBooking(bookingId, startOrEnd, queryParams.photo, queryParams.video)
-        const send = await notification.serviceStatus(userId, data, startOrEnd)
-        res.status(200).json({ message: 'Mensagem enviada com sucesso', messageContent: send });
+        // const send = await notification.serviceStatus(userId, data, startOrEnd) messageContent: send
+        res.status(200).json({ message: 'Mensagem enviada com sucesso' });
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: 'Erro ao enviar mensagem', error: error });

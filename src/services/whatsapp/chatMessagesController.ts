@@ -13,7 +13,7 @@ sock.ev.on("messages.upsert", async (newMessage) => {
             const whatsappId: any = message.key.remoteJid; // ID do remetente (grupo ou contato)
             const isGroup = whatsappId.endsWith("@g.us"); // Verifica se é grupo
             const msg = message.message?.conversation || message.message?.extendedTextMessage?.text;
-            if (msg){
+            if (msg && !isGroup){
                 const call = responses.find(response => msg.includes(response.call))
                 if(call){
                     await call.action({msg, whatsappId})

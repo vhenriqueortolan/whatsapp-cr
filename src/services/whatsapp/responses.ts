@@ -1,4 +1,4 @@
-import { findAndUpdateWhatsappId, findOngoingBookings } from "../db/dbUtils.js"
+import { findAndUpdateWhatsappId, findOngoingBookings, findPendingBookings } from "../db/dbUtils.js"
 
 interface CallContent{
     msg: string,
@@ -7,6 +7,8 @@ interface CallContent{
 
 interface Booking{
     status: string,
+    id: string,
+    page: string,
     schedule: {
         start: {hour: string},
         end: string,
@@ -87,6 +89,24 @@ const responses = [
                 }
             })
         }
+    },
+    {
+        call: '#pendente',
+        action: async (content?: CallContent): Promise<string> => {
+            return new Promise(async(resolve, reject)=>{
+                await findPendingBookings()
+                .then((bookings: any)=>{
+                    let text = `Aqui estão os agendamentos pendentes:`
+                    bookings.forEach((booking: any) => {
+                        text += texts.pendingList(booking) 
+                    });
+                    resolve(text)
+                })
+                .catch((text)=>{
+                    reject(text)
+                })
+            })
+        }
     }
 
 ] as const
@@ -95,12 +115,24 @@ const texts = {
     bookingList:(booking: Booking)=> `
 
 ${booking.status === 'PENDING' ? '*PENDENTE*' : ''}
+Imóvel: ${booking.property.id}
 Endereço: *${booking.property.address}, ${booking.property.neighborhood}*
 Horário: *${booking.schedule.start.hour} - ${booking.schedule.end}*
 Serviços: ${booking.services}
-Imóvel: ${booking.property.id}
 Corretor: ${booking.broker.name} - WhatsApp: ${booking.broker.whatsapp.slice(2)}
-${booking.notes ? `${booking.notes}` : ''}`
+${booking.notes ? `${booking.notes}` : ''}`,
+
+    pendingList: (booking: Booking)=>`
+
+Imóvel: ${booking.property.id}
+Endereço: *${booking.property.address}, ${booking.property.neighborhood}*
+Horário: *${booking.schedule.start.hour} - ${booking.schedule.end}*
+Serviços: ${booking.services}
+Corretor: ${booking.broker.name} - WhatsApp: ${booking.broker.whatsapp.slice(2)}
+> Para *confirmar* o agendamento clique aqui https://whatsapp-cr.onrender.com/booking/${booking.id}/confirm
+> Para *reagendar* clique aqui ${booking.page}
+> Para *recusar* clique aqui https://whatsapp-cr.onrender.com/booking/${booking.id}/decline
+========================`
 
 }
 
