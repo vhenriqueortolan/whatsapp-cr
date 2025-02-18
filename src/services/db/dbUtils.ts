@@ -209,7 +209,7 @@ export async function findOngoingBookings(date?: string) {
 export async function findPendingBookings() {
     return new Promise(async(resolve, reject)=>{
         const bookings = await Booking.find({'status': 'PENDING'});
-        if (bookings){
+        if (bookings.length > 0){
         resolve(bookings)
         } else {
         reject('Nenhuma pendência encontrada')
